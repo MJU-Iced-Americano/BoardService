@@ -3,8 +3,10 @@ package com.mju.Board.presentation.controller;
 import com.mju.Board.application.BoardService;
 import com.mju.Board.domain.model.FAQBoard;
 import com.mju.Board.domain.model.Result.CommonResult;
+import com.mju.Board.domain.service.ResponseService;
 import com.mju.Board.presentation.dto.FAQRegisterDto;
 import com.mju.Board.presentation.dto.FAQUpdateDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,11 +14,12 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/board-service")
 public class BoardController {
 
-    @Autowired
-    BoardService boardService;
+    private final BoardService boardService;
+    private final ResponseService responseService;
 
     @GetMapping("/ping")
     public String ping() {
@@ -27,31 +30,37 @@ public class BoardController {
     //FAQ 등록
     @PostMapping("/registerFaqGeneral")
     public CommonResult registerFaqGeneral(@RequestBody FAQRegisterDto faqRegisterDto){
-        return boardService.registerFaqGeneral(faqRegisterDto);
+        boardService.registerFaqGeneral(faqRegisterDto);
+        return responseService.getSuccessfulResult();
     }
     @PostMapping("/registerFaqAdu")
     public CommonResult registerFaqAdu(@RequestBody FAQRegisterDto faqRegisterDto){
-        return boardService.registerFaqAdu(faqRegisterDto);
+        boardService.registerFaqAdu(faqRegisterDto);
+        return responseService.getSuccessfulResult();
     }
 
     //일반회원 FAQ 조회
     @GetMapping("show/listFaqGeneral")
-    public List<FAQBoard> listFaqGeneral() {
-        List<FAQBoard> generalFaqBoardList = boardService.getGeneralFAQBoardList();
-        return generalFaqBoardList;
+    public CommonResult listFaqGeneral() {
+//      CommonResult commonResult = responseService.getListResult(faqBoardRepository.findByType(FAQBoard.FAQType.GENERAL_MEMBER));
+        List<FAQBoard> generalFAQBoardList = boardService.getGeneralFAQBoardList();
+        CommonResult commonResult = responseService.getListResult(generalFAQBoardList);
+        return commonResult;
     }
 
     //교육 FAQ 조회
     @GetMapping("show/listFaqAdu")
-    public List<FAQBoard> listFaqAdu() {
+    public CommonResult listFaqAdu() {
         List<FAQBoard> aduFaqBoardList = boardService.getAduFAQBoardList();
-        return aduFaqBoardList;
+        CommonResult commonResult = responseService.getListResult(aduFaqBoardList);
+        return commonResult;
     }
 
     //선택한것 삭제
     @DeleteMapping("/delete/{faqIndex}")
-    public CommonResult deleteFaq(@PathVariable Long faqIndex) {
-        return boardService.deleteFaq(faqIndex);
+    public CommonResult deleteFaq(@PathVariable Long faqIndex) throws Exception {
+        boardService.deleteFaq(faqIndex);
+        return responseService.getSuccessfulResult();
     }
 
     //선택한 게시물 보기 Q&A에 넣기
@@ -63,14 +72,15 @@ public class BoardController {
     //FAQ 업데이트
     @PutMapping("update/{faqIndex}")
     public CommonResult updateFaq(@PathVariable Long faqIndex, @RequestBody FAQUpdateDto faqUpdateDto) {
-        return boardService.updateFaq(faqIndex, faqUpdateDto);
+        boardService.updateFaq(faqIndex, faqUpdateDto);
+        return responseService.getSuccessfulResult();
     }
 
     //클릭한것 조회수 증가
     @PostMapping("/countFaqClick/{faqIndex}")
     public CommonResult countFaqClick (@PathVariable Long faqIndex) {
-        return boardService.countFaqClick(faqIndex);
-
+        boardService.countFaqClick(faqIndex);
+        return responseService.getSuccessfulResult();
     }
 
 

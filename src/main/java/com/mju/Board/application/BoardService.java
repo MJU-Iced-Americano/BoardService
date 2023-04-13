@@ -10,17 +10,17 @@ import java.util.Map;
 
 
 public interface BoardService {
-    public CommonResult registerFaqGeneral(FAQRegisterDto faqRegisterDto);
+    public void registerFaqGeneral(FAQRegisterDto faqRegisterDto);
     public List<FAQBoard> getGeneralFAQBoardList();
     public List<FAQBoard> getAduFAQBoardList();
 
-    public CommonResult updateFaq(Long faqIndex, FAQUpdateDto faqUpdateDto);
+    public void updateFaq(Long faqIndex, FAQUpdateDto faqUpdateDto);
 
 //    public FAQFindByIdDto findById(Long faqIndex);
-    public CommonResult deleteFaq(Long faqIndex);
+    public void deleteFaq(Long faqIndex);
 
-    CommonResult registerFaqAdu(FAQRegisterDto faqRegisterDto);
+    public void registerFaqAdu(FAQRegisterDto faqRegisterDto);
 
-    CommonResult countFaqClick(Long faqId);
+    public void countFaqClick(Long faqId);
 
 }

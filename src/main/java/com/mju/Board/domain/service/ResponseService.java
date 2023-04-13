@@ -3,6 +3,7 @@ package com.mju.Board.domain.service;
 import com.mju.Board.domain.model.Result.CommonResult;
 import com.mju.Board.domain.model.Result.ListResult;
 import com.mju.Board.domain.model.Result.SingleResult;
+import com.mju.Board.domain.repository.FAQBoardRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Service
 public class ResponseService {
+
 
     @AllArgsConstructor
     @Getter

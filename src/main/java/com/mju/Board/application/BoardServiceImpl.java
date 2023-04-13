@@ -21,11 +21,9 @@ import static com.mju.Board.domain.model.Exception.ExceptionList.NOT_EXISTENT_FA
 public class BoardServiceImpl implements BoardService{
 
     private final FAQBoardRepository faqBoardRepository;
-    private final ResponseService responseService;
-
     @Override
     @Transactional
-    public CommonResult registerFaqGeneral(FAQRegisterDto faqRegisterDto) {
+    public void registerFaqGeneral(FAQRegisterDto faqRegisterDto) {
         FAQBoard originalFaqBoard = new FAQBoard(faqRegisterDto.getFaqTitle(), faqRegisterDto.getFaqContent(),faqRegisterDto.isChecked());
         FAQBoard newFaqBoard = FAQBoard.builder()
                 .faqIndex(originalFaqBoard.getFaqIndex())
@@ -38,12 +36,11 @@ public class BoardServiceImpl implements BoardService{
                 .isChecked(originalFaqBoard.isChecked())
                 .build();
         faqBoardRepository.save(newFaqBoard);
-        return responseService.getSuccessfulResult();
     }
 
     @Override
     @Transactional
-    public CommonResult registerFaqAdu(FAQRegisterDto faqRegisterDto) {
+    public void registerFaqAdu(FAQRegisterDto faqRegisterDto) {
         FAQBoard originalFaqBoard = new FAQBoard(faqRegisterDto.getFaqTitle(), faqRegisterDto.getFaqContent(), faqRegisterDto.isChecked());
         FAQBoard newFaqBoard = FAQBoard.builder()
                 .faqIndex(originalFaqBoard.getFaqIndex())
@@ -56,7 +53,6 @@ public class BoardServiceImpl implements BoardService{
                 .isChecked(originalFaqBoard.isChecked())
                 .build();
         faqBoardRepository.save(newFaqBoard);
-        return responseService.getSuccessfulResult();
     }
 
 
@@ -64,55 +60,45 @@ public class BoardServiceImpl implements BoardService{
     @Override
     @Transactional
     public List<FAQBoard> getGeneralFAQBoardList() {
-        return faqBoardRepository.findByType(FAQBoard.FAQType.GENERAL_MEMBER);
+//        CommonResult commonResult = responseService.getListResult(faqBoardRepository.findByType(FAQBoard.FAQType.GENERAL_MEMBER));
+        List<FAQBoard> generalFAQBoardList = faqBoardRepository.findByType(FAQBoard.FAQType.GENERAL_MEMBER);
+        return generalFAQBoardList;
     }
 
     @Override
     @Transactional
     public List<FAQBoard> getAduFAQBoardList() {
-        return faqBoardRepository.findByType(FAQBoard.FAQType.EDUCATION);
+        List<FAQBoard> aduFAQBoardList = faqBoardRepository.findByType(FAQBoard.FAQType.EDUCATION);
+        return aduFAQBoardList;
     }
 
     @Override
     @Transactional
-    public CommonResult updateFaq(Long faqIndex, FAQUpdateDto faqUpdateDto) {
+    public void updateFaq(Long faqIndex, FAQUpdateDto faqUpdateDto) {
         Optional<FAQBoard> optionalFaqBoard = faqBoardRepository.findById(faqIndex);
-        if (optionalFaqBoard.isPresent()) {
-            FAQBoard faqBoard = optionalFaqBoard.get();
-            faqBoard.faqUpdate(faqUpdateDto.getFaqTitle(), faqUpdateDto.getFaqContent(), faqUpdateDto.isChecked());
-            faqBoardRepository.save(faqBoard);
-            return responseService.getSuccessfulResult();
-        } else {
-            CommonResult failResult = responseService.getFailResult(NOT_EXISTENT_FAQBOARD.getCode(), NOT_EXISTENT_FAQBOARD.getMessage());
-            return failResult;
-        }
+//        FAQBoard faqBoard = optionalFaqBoard.orElseThrow(() -> new Exception("FAQBoard not found"));
+        FAQBoard faqBoard = optionalFaqBoard.get();
+        faqBoard.faqUpdate(faqUpdateDto.getFaqTitle(), faqUpdateDto.getFaqContent(), faqUpdateDto.isChecked());
+        faqBoardRepository.save(faqBoard);
     }
 
     @Override
     @Transactional
-    public CommonResult deleteFaq(Long faqIndex) {
-        Optional<FAQBoard> optionalFaqBoard = faqBoardRepository.findById(faqIndex);
-        if (optionalFaqBoard.isPresent()) { // 해당 index의 FAQBoard가 존재하는 경우
-            faqBoardRepository.deleteById(faqIndex);
-            return responseService.getSuccessfulResult();
-        } else { // 해당 index의 FAQBoard가 존재하지 않는 경우
-            return responseService.getFailResult(NOT_EXISTENT_FAQBOARD.getCode(), NOT_EXISTENT_FAQBOARD.getMessage());
-        }
+    public void deleteFaq(Long faqIndex){
+//        Optional<FAQBoard> optionalFaqBoard = faqBoardRepository.findById(faqIndex);
+//        if (optionalFaqBoard.isPresent()) { // 해당 index의 FAQBoard가 존재하는 경우
+        faqBoardRepository.deleteById(faqIndex);
+//        } else { // 해당 index의 FAQBoard가 존재하지 않는 경우
     }
     @Override
     @Transactional
-    public CommonResult countFaqClick(Long faqId) {
+    public void countFaqClick(Long faqId) {
         Optional<FAQBoard> optionalFaqBoard = faqBoardRepository.findById(faqId);
-        if (optionalFaqBoard.isPresent()) {
-            FAQBoard faqBoardtrans = optionalFaqBoard.get();
-            FAQBoard faqBoard = faqBoardtrans.builder()
-                    .count(optionalFaqBoard.get().getCount() + 1)
-                    .build();
-            faqBoardRepository.save(faqBoard);
-            return responseService.getSuccessfulResult();
-        } else {
-            return responseService.getFailResult(NOT_EXISTENT_FAQBOARD.getCode(), NOT_EXISTENT_FAQBOARD.getMessage());
-        }
+        FAQBoard faqBoardtrans = optionalFaqBoard.get();
+        FAQBoard faqBoard = FAQBoard.builder()
+                .count(faqBoardtrans.getCount() + 1)
+                .build();
+        faqBoardRepository.save(faqBoard);
     }
 
 
