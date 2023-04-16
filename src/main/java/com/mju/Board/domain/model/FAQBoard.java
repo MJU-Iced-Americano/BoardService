@@ -77,4 +77,8 @@ public class FAQBoard {
         this.faqContent = faqContent;
         this.isChecked = isChecked;
     }
+
+    public void incrementCount() {
+        this.count++;
+    }
 }

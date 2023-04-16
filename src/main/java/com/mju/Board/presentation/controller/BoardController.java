@@ -40,7 +40,7 @@ public class BoardController {
     }
 
     //일반회원 FAQ 조회
-    @GetMapping("show/listFaqGeneral")
+    @GetMapping("/show/listFaqGeneral")
     public CommonResult listFaqGeneral() {
 //      CommonResult commonResult = responseService.getListResult(faqBoardRepository.findByType(FAQBoard.FAQType.GENERAL_MEMBER));
         List<FAQBoard> generalFAQBoardList = boardService.getGeneralFAQBoardList();
@@ -49,7 +49,7 @@ public class BoardController {
     }
 
     //교육 FAQ 조회
-    @GetMapping("show/listFaqAdu")
+    @GetMapping("/show/listFaqAdu")
     public CommonResult listFaqAdu() {
         List<FAQBoard> aduFaqBoardList = boardService.getAduFAQBoardList();
         CommonResult commonResult = responseService.getListResult(aduFaqBoardList);
@@ -70,14 +70,14 @@ public class BoardController {
 //    }
 
     //FAQ 업데이트
-    @PutMapping("update/{faqIndex}")
+    @PutMapping("/update/{faqIndex}")
     public CommonResult updateFaq(@PathVariable Long faqIndex, @RequestBody FAQUpdateDto faqUpdateDto) {
         boardService.updateFaq(faqIndex, faqUpdateDto);
         return responseService.getSuccessfulResult();
     }
 
     //클릭한것 조회수 증가
-    @PostMapping("/countFaqClick/{faqIndex}")
+    @GetMapping("/countFaqClick/{faqIndex}")
     public CommonResult countFaqClick (@PathVariable Long faqIndex) {
         boardService.countFaqClick(faqIndex);
         return responseService.getSuccessfulResult();

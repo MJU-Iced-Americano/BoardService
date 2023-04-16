@@ -21,6 +21,6 @@ public interface BoardService {
 
     public void registerFaqAdu(FAQRegisterDto faqRegisterDto);
 
-    public void countFaqClick(Long faqId);
+    public void countFaqClick(Long faqIndex);
 
 }

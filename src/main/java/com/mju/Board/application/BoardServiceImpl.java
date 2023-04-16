@@ -92,13 +92,13 @@ public class BoardServiceImpl implements BoardService{
     }
     @Override
     @Transactional
-    public void countFaqClick(Long faqId) {
-        Optional<FAQBoard> optionalFaqBoard = faqBoardRepository.findById(faqId);
-        FAQBoard faqBoardtrans = optionalFaqBoard.get();
-        FAQBoard faqBoard = FAQBoard.builder()
-                .count(faqBoardtrans.getCount() + 1)
-                .build();
-        faqBoardRepository.save(faqBoard);
+    public void countFaqClick(Long faqIndex) {
+        Optional<FAQBoard> optionalFaqBoard = faqBoardRepository.findById(faqIndex);
+        if (optionalFaqBoard.isPresent()) {
+            FAQBoard faqBoard = optionalFaqBoard.get();
+            faqBoard.incrementCount();
+            faqBoardRepository.save(faqBoard);
+        }
     }
 
 
