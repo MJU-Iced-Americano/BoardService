@@ -11,6 +11,7 @@ import java.util.Map;
 
 public interface BoardService {
     public void registerFaqGeneral(FAQRegisterDto faqRegisterDto);
+    public List<FAQBoard> getFaqTop5();
     public List<FAQBoard> getGeneralFAQBoardList();
     public List<FAQBoard> getAduFAQBoardList();
 

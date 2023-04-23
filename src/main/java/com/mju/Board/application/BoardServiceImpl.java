@@ -1,6 +1,7 @@
 package com.mju.Board.application;
 
 import com.mju.Board.domain.model.Exception.ExceptionList;
+import com.mju.Board.domain.model.Exception.FaqBoardRegisterException;
 import com.mju.Board.domain.model.FAQBoard;
 import com.mju.Board.domain.repository.FAQBoardRepository;
 import com.mju.Board.domain.model.Exception.FaqBoardNotFindException;
@@ -22,46 +23,51 @@ public class BoardServiceImpl implements BoardService{
     @Transactional
     public void registerFaqGeneral(FAQRegisterDto faqRegisterDto) {
         try {
-        FAQBoard originalFaqBoard = new FAQBoard(faqRegisterDto.getFaqTitle(), faqRegisterDto.getFaqContent(),faqRegisterDto.isChecked());
-        FAQBoard newFaqBoard = FAQBoard.builder()
-                .faqIndex(originalFaqBoard.getFaqIndex())
-                .faqTitle(originalFaqBoard.getFaqTitle())
-                .faqContent(originalFaqBoard.getFaqContent())
-                .createdAt(originalFaqBoard.getCreatedAt())
-                .updatedAt(originalFaqBoard.getUpdatedAt())
+        FAQBoard faqBoard = FAQBoard.builder()
+                .faqTitle(faqRegisterDto.getFaqTitle())
+                .faqContent(faqRegisterDto.getFaqContent())
                 .type(FAQBoard.FAQType.GENERAL_MEMBER)
-                .count(originalFaqBoard.getCount())
-                .isChecked(originalFaqBoard.isChecked())
+                .isChecked(faqRegisterDto.isChecked())
                 .build();
-        faqBoardRepository.save(newFaqBoard);
+        faqBoardRepository.save(faqBoard);
+        faqBoard.isRegisterNew();
+        faqBoardRepository.save(faqBoard);
         }catch (FaqBoardNotFindException e){
-            throw new FaqBoardNotFindException(ExceptionList.FAQBOARD_REGISTER_GENERAL_MEMBER);
+            throw new FaqBoardRegisterException(ExceptionList.FAQBOARD_REGISTER_GENERAL_MEMBER);
         }
     }
+
 
     @Override
     @Transactional
     public void registerFaqAdu(FAQRegisterDto faqRegisterDto) {
         try {
-            FAQBoard originalFaqBoard = new FAQBoard(faqRegisterDto.getFaqTitle(), faqRegisterDto.getFaqContent(), faqRegisterDto.isChecked());
-            FAQBoard newFaqBoard = FAQBoard.builder()
-                    .faqIndex(originalFaqBoard.getFaqIndex())
-                    .faqTitle(originalFaqBoard.getFaqTitle())
-                    .faqContent(originalFaqBoard.getFaqContent())
-                    .createdAt(originalFaqBoard.getCreatedAt())
-                    .updatedAt(originalFaqBoard.getUpdatedAt())
+            FAQBoard faqBoard = FAQBoard.builder()
+                    .faqTitle(faqRegisterDto.getFaqTitle())
+                    .faqContent(faqRegisterDto.getFaqContent())
                     .type(FAQBoard.FAQType.EDUCATION)
-                    .count(originalFaqBoard.getCount())
-                    .isChecked(originalFaqBoard.isChecked())
+                    .isChecked(faqRegisterDto.isChecked())
                     .build();
-            faqBoardRepository.save(newFaqBoard);
+            faqBoardRepository.save(faqBoard);
+            faqBoard.isRegisterNew();
+            faqBoardRepository.save(faqBoard);
         }catch (FaqBoardNotFindException e){
-            throw new FaqBoardNotFindException(ExceptionList.FAQBOARD_REGISTER_EDUCATION);
+            throw new FaqBoardRegisterException(ExceptionList.FAQBOARD_REGISTER_EDUCATION);
         }
     }
 
 
 
+    @Override
+    @Transactional
+    public List<FAQBoard> getFaqTop5() {
+        List<FAQBoard> faqTop5List = faqBoardRepository.findTop5ByOrderByCountDesc();
+        if (!faqTop5List.isEmpty()) {
+            return faqTop5List;
+        }else {
+            throw new FaqBoardNotFindException(ExceptionList.FAQBOARD_NOT_FIND_TOP5);
+        }
+    }
     @Override
     @Transactional
     public List<FAQBoard> getGeneralFAQBoardList() {
@@ -109,6 +115,7 @@ public class BoardServiceImpl implements BoardService{
             throw new FaqBoardNotFindException(ExceptionList.FAQBOARD_NOT_EXISTENT_DELETE);
         }
     }
+
     @Override
     @Transactional
     public void countFaqClick(Long faqIndex) {
@@ -121,15 +128,5 @@ public class BoardServiceImpl implements BoardService{
             throw new FaqBoardNotFindException(ExceptionList.FAQBOARD_NOT_EXISTENT_COUNT);
         }
     }
-
-
-
-//    @Override
-//    @Transactional
-//    public FAQFindByIdDto findById(Long faqIndex) {
-//        FAQBoard faqBoard = faqBoardRepository.findById(faqIndex).orElseThrow(
-//                ()-> new IllegalArgumentException("해당 게시글이 없습니다. id" + faqIndex)
-//        );
-//        return new FAQFindByIdDto(faqBoard);
-//    }
+    
 }

@@ -2,6 +2,7 @@ package com.mju.Board.domain.service;
 
 import com.mju.Board.domain.model.Exception.ExceptionList;
 import com.mju.Board.domain.model.Exception.FaqBoardNotFindException;
+import com.mju.Board.domain.model.Exception.FaqBoardRegisterException;
 import com.mju.Board.domain.model.Result.CommonResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,13 @@ public class ExceptionService {
 
     @ExceptionHandler({FaqBoardNotFindException.class})
     protected CommonResult handleCustom(FaqBoardNotFindException e) {
+        log.error("non exception FAQBoard", e);
+        ExceptionList exceptionList = e.getExceptionList();
+        return responseService.getFailResult(exceptionList.getCode(), exceptionList.getMessage());
+    }
+
+    @ExceptionHandler({FaqBoardRegisterException.class})
+    protected CommonResult handleCustom(FaqBoardRegisterException e) {
         log.error("non exception FAQBoard", e);
         ExceptionList exceptionList = e.getExceptionList();
         return responseService.getFailResult(exceptionList.getCode(), exceptionList.getMessage());

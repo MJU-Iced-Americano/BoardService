@@ -38,6 +38,13 @@ public class BoardController {
         boardService.registerFaqAdu(faqRegisterDto);
         return responseService.getSuccessfulResult();
     }
+    //Home에 TOP5 조회
+    @GetMapping("/show/faqHome")
+    public CommonResult faqHome () {
+        List<FAQBoard> faqTop5List = boardService.getFaqTop5();
+        CommonResult commonResult = responseService.getListResult(faqTop5List);
+        return commonResult;
+    }
 
     //일반회원 FAQ 조회
     @GetMapping("/show/listFaqGeneral")
@@ -82,6 +89,8 @@ public class BoardController {
         boardService.countFaqClick(faqIndex);
         return responseService.getSuccessfulResult();
     }
+
+
 
 
 }

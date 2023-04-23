@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface FAQBoardRepository extends JpaRepository<FAQBoard, Long> {
     List<FAQBoard> findByType(FAQBoard.FAQType type);
+    List<FAQBoard> findTop5ByOrderByCountDesc();
 }
