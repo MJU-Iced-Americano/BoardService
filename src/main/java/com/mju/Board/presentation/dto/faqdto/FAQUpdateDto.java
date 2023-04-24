@@ -1,10 +1,7 @@
-package com.mju.Board.presentation.dto;
+package com.mju.Board.presentation.dto.faqdto;
 
-import jakarta.persistence.PreUpdate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor

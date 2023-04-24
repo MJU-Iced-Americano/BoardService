@@ -1,12 +1,14 @@
 package com.mju.Board.application;
 
 import com.mju.Board.domain.model.FAQBoard;
-import com.mju.Board.presentation.dto.FAQRegisterDto;
-import com.mju.Board.domain.model.Result.CommonResult;
-import com.mju.Board.presentation.dto.FAQUpdateDto;
+import com.mju.Board.domain.model.QuestionBoard;
+import com.mju.Board.presentation.dto.faqdto.FAQRegisterDto;
+import com.mju.Board.presentation.dto.faqdto.FAQSearchDto;
+import com.mju.Board.presentation.dto.faqdto.FAQUpdateDto;
+import com.mju.Board.presentation.dto.qnadto.QnARegisterDto;
+import com.mju.Board.presentation.dto.qnadto.QnAupdateDto;
 
 import java.util.List;
-import java.util.Map;
 
 
 public interface BoardService {
@@ -24,4 +26,13 @@ public interface BoardService {
 
     public void countFaqClick(Long faqIndex);
 
+    public List<FAQBoard> searchFaq(FAQSearchDto faqSearchDto);
+
+    public void registerQnAGeneral(QnARegisterDto qnARegisterDto);
+
+    public List<QuestionBoard> getQnABoardList();
+
+    public void deleteQnA(Long questionIndex);
+
+    public void updateQnA(Long questionIndex, QnAupdateDto qnAupdateDto);
 }

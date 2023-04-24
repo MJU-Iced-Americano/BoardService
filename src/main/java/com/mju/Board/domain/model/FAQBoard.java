@@ -56,8 +56,8 @@ public class FAQBoard {
 
     @PrePersist // 데이터 생성이 이루어질때 사전 작업
     public void prePersist() {
-        this.createdAt = LocalDateTime.of(2023, 4, 16, 0, 0, 0);
-//        this.createdAt = LocalDateTime.now();
+//        this.createdAt = LocalDateTime.of(2023, 4, 16, 0, 0, 0);
+        this.createdAt = LocalDateTime.now();
         this.updatedAt = this.createdAt;
     }
 

@@ -1,11 +1,16 @@
 package com.mju.Board.application;
 
 import com.mju.Board.domain.model.Exception.ExceptionList;
-import com.mju.Board.domain.model.Exception.FaqBoardRegisterException;
 import com.mju.Board.domain.model.FAQBoard;
+import com.mju.Board.domain.model.QuestionBoard;
 import com.mju.Board.domain.repository.FAQBoardRepository;
 import com.mju.Board.domain.model.Exception.FaqBoardNotFindException;
-import com.mju.Board.presentation.dto.*;
+import com.mju.Board.domain.repository.QuestionBoardRepository;
+import com.mju.Board.presentation.dto.faqdto.FAQRegisterDto;
+import com.mju.Board.presentation.dto.faqdto.FAQSearchDto;
+import com.mju.Board.presentation.dto.faqdto.FAQUpdateDto;
+import com.mju.Board.presentation.dto.qnadto.QnARegisterDto;
+import com.mju.Board.presentation.dto.qnadto.QnAupdateDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,11 +23,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BoardServiceImpl implements BoardService{
 
+    //////////////////////////<FAQ게시판>/////////////////////////////
     private final FAQBoardRepository faqBoardRepository;
+    private final QuestionBoardRepository questionBoardRepository;
     @Override
     @Transactional
     public void registerFaqGeneral(FAQRegisterDto faqRegisterDto) {
-        try {
         FAQBoard faqBoard = FAQBoard.builder()
                 .faqTitle(faqRegisterDto.getFaqTitle())
                 .faqContent(faqRegisterDto.getFaqContent())
@@ -32,16 +38,10 @@ public class BoardServiceImpl implements BoardService{
         faqBoardRepository.save(faqBoard);
         faqBoard.isRegisterNew();
         faqBoardRepository.save(faqBoard);
-        }catch (FaqBoardNotFindException e){
-            throw new FaqBoardRegisterException(ExceptionList.FAQBOARD_REGISTER_GENERAL_MEMBER);
-        }
     }
-
-
     @Override
     @Transactional
     public void registerFaqAdu(FAQRegisterDto faqRegisterDto) {
-        try {
             FAQBoard faqBoard = FAQBoard.builder()
                     .faqTitle(faqRegisterDto.getFaqTitle())
                     .faqContent(faqRegisterDto.getFaqContent())
@@ -51,13 +51,7 @@ public class BoardServiceImpl implements BoardService{
             faqBoardRepository.save(faqBoard);
             faqBoard.isRegisterNew();
             faqBoardRepository.save(faqBoard);
-        }catch (FaqBoardNotFindException e){
-            throw new FaqBoardRegisterException(ExceptionList.FAQBOARD_REGISTER_EDUCATION);
-        }
     }
-
-
-
     @Override
     @Transactional
     public List<FAQBoard> getFaqTop5() {
@@ -79,7 +73,6 @@ public class BoardServiceImpl implements BoardService{
             throw new FaqBoardNotFindException(ExceptionList.FAQBOARD_NOT_FINDTYPE_GENERAL_MEMBER);
         }
     }
-
     @Override
     @Transactional
     public List<FAQBoard> getAduFAQBoardList() {
@@ -90,7 +83,6 @@ public class BoardServiceImpl implements BoardService{
             throw new FaqBoardNotFindException(ExceptionList.FAQBOARD_NOT_FINDTYPE_EDUCATION);
         }
     }
-
     @Override
     @Transactional
     public void updateFaq(Long faqIndex, FAQUpdateDto faqUpdateDto) {
@@ -104,7 +96,6 @@ public class BoardServiceImpl implements BoardService{
             throw new FaqBoardNotFindException(ExceptionList.FAQBOARD_NOT_EXISTENT_UPDATE);
         }
     }
-
     @Override
     @Transactional
     public void deleteFaq(Long faqIndex){
@@ -115,7 +106,6 @@ public class BoardServiceImpl implements BoardService{
             throw new FaqBoardNotFindException(ExceptionList.FAQBOARD_NOT_EXISTENT_DELETE);
         }
     }
-
     @Override
     @Transactional
     public void countFaqClick(Long faqIndex) {
@@ -128,5 +118,61 @@ public class BoardServiceImpl implements BoardService{
             throw new FaqBoardNotFindException(ExceptionList.FAQBOARD_NOT_EXISTENT_COUNT);
         }
     }
-    
+    @Override
+    @Transactional
+    public List<FAQBoard> searchFaq(FAQSearchDto faqSearchDto) {
+        List<FAQBoard> searchFAQBoardList = faqBoardRepository.findByFaqTitleContainingIgnoreCase(faqSearchDto.getKeyword());
+        if (!searchFAQBoardList.isEmpty()) {
+            return searchFAQBoardList;
+        }else{
+            throw new FaqBoardNotFindException(ExceptionList.FAQBOARD_NOT_EXISTENT_KEYWORD);
+        }
+    }
+
+
+    //////////////////////////////<문의게시판>//////////////////////////////
+    @Override
+    @Transactional
+    public void registerQnAGeneral(QnARegisterDto qnARegisterDto) {
+        QuestionBoard questionBoard = QuestionBoard.builder()
+                .questionTitle(qnARegisterDto.getQuestionTitle())
+                .questionContent(qnARegisterDto.getQuestionContent())
+                .build();
+        questionBoardRepository.save(questionBoard);
+    }
+
+    @Override
+    @Transactional
+    public List<QuestionBoard> getQnABoardList() {
+        List<QuestionBoard> questionBoardList = questionBoardRepository.findAll();
+        if (!questionBoardList.isEmpty()) {
+            return questionBoardList;
+        }else{
+            throw new FaqBoardNotFindException(ExceptionList.FAQBOARD_NOT_FINDTYPE_EDUCATION);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deleteQnA(Long questionIndex) {
+        Optional<QuestionBoard> questionBoard = questionBoardRepository.findById(questionIndex);
+        if (questionBoard.isPresent()) {
+            questionBoardRepository.deleteById(questionIndex);
+        } else {
+            throw new FaqBoardNotFindException(ExceptionList.FAQBOARD_NOT_EXISTENT_DELETE);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void updateQnA(Long questionIndex, QnAupdateDto qnAupdateDto) {
+        Optional<QuestionBoard> optionalQuestionBoard = questionBoardRepository.findById(questionIndex);
+        if (optionalQuestionBoard.isPresent()) {
+            QuestionBoard questionBoard = optionalQuestionBoard.get();
+            questionBoard.questionUpdate(qnAupdateDto.getQuestionTitle(), qnAupdateDto.getQuestionContent());
+            questionBoardRepository.save(questionBoard);
+        }else{
+            throw new FaqBoardNotFindException(ExceptionList.FAQBOARD_NOT_EXISTENT_UPDATE);
+        }
+    }
 }

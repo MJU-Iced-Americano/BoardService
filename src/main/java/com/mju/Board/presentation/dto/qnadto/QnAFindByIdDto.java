@@ -1,4 +1,4 @@
-package com.mju.Board.presentation.dto;
+package com.mju.Board.presentation.dto.qnadto;
 
 import com.mju.Board.domain.model.FAQBoard;
 import lombok.Getter;

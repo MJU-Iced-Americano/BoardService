@@ -1,6 +1,5 @@
-package com.mju.Board.presentation.dto;
+package com.mju.Board.presentation.dto.faqdto;
 
-import jdk.jshell.Snippet;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
