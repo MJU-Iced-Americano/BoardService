@@ -35,4 +35,6 @@ public interface BoardService {
     public void deleteQnA(Long questionIndex);
 
     public void updateQnA(Long questionIndex, QnAupdateDto qnAupdateDto);
+
+    public FAQBoard findByFAQId(long faqIndex);
 }

@@ -62,6 +62,18 @@ public class BoardServiceImpl implements BoardService{
             throw new FaqBoardNotFindException(ExceptionList.FAQBOARD_NOT_FIND_TOP5);
         }
     }
+
+    @Override
+    @Transactional
+    public FAQBoard findByFAQId(long faqIndex) {
+        Optional<FAQBoard> findByFAQ = faqBoardRepository.findById(faqIndex);
+        if (findByFAQ.isPresent()) {
+            FAQBoard faqBoardOne = findByFAQ.get();
+            return faqBoardOne;
+        }else{
+            throw new FaqBoardNotFindException(ExceptionList.FAQBOARD_NOT_FIND);
+        }
+    }
     @Override
     @Transactional
     public List<FAQBoard> getGeneralFAQBoardList() {
@@ -121,13 +133,15 @@ public class BoardServiceImpl implements BoardService{
     @Override
     @Transactional
     public List<FAQBoard> searchFaq(FAQSearchDto faqSearchDto) {
-        List<FAQBoard> searchFAQBoardList = faqBoardRepository.findByFaqTitleContainingIgnoreCase(faqSearchDto.getKeyword());
+        List<FAQBoard> searchFAQBoardList = faqBoardRepository.findByFaqTitleContainingIgnoreCaseOrFaqContentContainingIgnoreCase(faqSearchDto.getKeyword(), faqSearchDto.getKeyword());
         if (!searchFAQBoardList.isEmpty()) {
             return searchFAQBoardList;
         }else{
             throw new FaqBoardNotFindException(ExceptionList.FAQBOARD_NOT_EXISTENT_KEYWORD);
         }
     }
+
+
 
 
     //////////////////////////////<문의게시판>//////////////////////////////
@@ -163,6 +177,7 @@ public class BoardServiceImpl implements BoardService{
         }
     }
 
+
     @Override
     @Transactional
     public void updateQnA(Long questionIndex, QnAupdateDto qnAupdateDto) {
@@ -175,4 +190,6 @@ public class BoardServiceImpl implements BoardService{
             throw new FaqBoardNotFindException(ExceptionList.FAQBOARD_NOT_EXISTENT_UPDATE);
         }
     }
+
+
 }

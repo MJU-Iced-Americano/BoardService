@@ -66,6 +66,14 @@ public class BoardController {
         return commonResult;
     }
 
+    //선택한 FAQ게시물 보기
+    @GetMapping("show/{faqIndex}")
+    public CommonResult findByFAQId(@PathVariable long faqIndex) {
+        FAQBoard findByFaqOne = boardService.findByFAQId(faqIndex);
+        CommonResult commonResult = responseService.getSingleResult(findByFaqOne);
+        return commonResult;
+    }
+
     //[관리자]선택한것 삭제
     @DeleteMapping("/delete/{faqIndex}")
     public CommonResult deleteFaq(@PathVariable Long faqIndex) throws Exception {
@@ -87,7 +95,7 @@ public class BoardController {
         boardService.countFaqClick(faqIndex);
         return responseService.getSuccessfulResult();
     }
-    //[관리자,강사진,수강생]제목으로 검색
+    //[관리자,강사진,수강생]제목, 내용으로 검색
     @PostMapping("/search")
     public CommonResult searchFaq (@RequestBody FAQSearchDto faqSearchDto) {
         List<FAQBoard> searchFAQBoardList = boardService.searchFaq(faqSearchDto);
