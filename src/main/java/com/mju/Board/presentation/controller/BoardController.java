@@ -67,7 +67,7 @@ public class BoardController {
     }
 
     //선택한 FAQ게시물 보기
-    @GetMapping("show/{faqIndex}")
+    @GetMapping("/show/{faqIndex}")
     public CommonResult findByFAQId(@PathVariable long faqIndex) {
         FAQBoard findByFaqOne = boardService.findByFAQId(faqIndex);
         CommonResult commonResult = responseService.getSingleResult(findByFaqOne);

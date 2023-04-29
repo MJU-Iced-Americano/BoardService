@@ -11,6 +11,6 @@ import java.util.List;
 public interface FAQBoardRepository extends JpaRepository<FAQBoard, Long> {
     List<FAQBoard> findByType(FAQBoard.FAQType type);
     List<FAQBoard> findTop5ByOrderByCountDesc();
-    List<FAQBoard> findByFaqTitleContainingIgnoreCaseOrFaqContentContainingIgnoreCase(String keyword1, String keyword2);
+    List<FAQBoard> findByFaqTitleContainingIgnoreCaseOrFaqContentContainingIgnoreCase(String title, String content);
 
 }
