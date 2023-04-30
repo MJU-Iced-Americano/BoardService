@@ -12,7 +12,7 @@ public class S3Config {
 
     @Bean
     public S3Client s3Client() {
-        AwsBasicCredentials awsCredentials = AwsBasicCredentials.create("AKIA3W5S2SAOTFHXF5NE", "z9IMZhk8eQ7JQs0eEXHU9taM/3+bUsdw5XZqvwsW");
+        AwsBasicCredentials awsCredentials = AwsBasicCredentials.create("", "");
 
         return S3Client.builder()
                 .region(Region.AP_NORTHEAST_2)
