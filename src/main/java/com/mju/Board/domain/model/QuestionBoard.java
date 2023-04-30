@@ -14,9 +14,10 @@ import java.time.LocalDateTime;
 @Table(name = "questionboard")
 public class QuestionBoard {
     @Builder
-    public QuestionBoard(String questionTitle, String questionContent){
+    public QuestionBoard(String questionTitle, String questionContent, String imageUrl){
         this.questionTitle= questionTitle;
         this.questionContent = questionContent;
+        this.imageUrl = imageUrl;
     }
 
     @Id
@@ -25,6 +26,9 @@ public class QuestionBoard {
     private Long questionIndex;
     @Column(name = "question_title")
     private String questionTitle;
+
+    @Column(name = "image_url") // 데이터베이스 테이블 컬럼 이름 설정
+    private String imageUrl; // 이미지 URL
 
     @Column(name = "question_content")
     private String questionContent;
@@ -35,9 +39,9 @@ public class QuestionBoard {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "Answer _state")
-    private AnswerState answerState;
+//    @Enumerated(EnumType.STRING)
+//    @Column(name = "Answer _state")
+//    private AnswerState answerState;
 
 
     @PrePersist // 데이터 생성이 이루어질때 사전 작업
@@ -50,5 +54,9 @@ public class QuestionBoard {
         this.questionTitle = questionTitle;
         this.questionContent = questionContent;
         this.updatedAt = LocalDateTime.now();//객체 불변성이 깨지지않게 이 객체안에서만 변동을 주는것.
+    }
+
+    public void updateImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

@@ -36,27 +36,6 @@ class BoardApplicationTests {
 
 	@Test
 	public void testRegisterQnA() throws Exception {
-		byte[] imageContent = Files.readAllBytes(Paths.get("C:/Users/DaEunYeo/Pictures/Screenshots/스크린샷_20221222_012024.png"));
-		// Multipart 데이터 생성
-		MockMultipartFile image = new MockMultipartFile(
-				"image",
-				"test-image.jpg",
-				MediaType.IMAGE_JPEG_VALUE,
-				imageContent
-		);
-
-		// HTTP 요청 생성
-		QnARegisterDto qnARegisterDto = new QnARegisterDto();
-		qnARegisterDto.setQuestionTitle("test question title");
-		qnARegisterDto.setQuestionContent("test question content");
-		ObjectMapper objectMapper = new ObjectMapper();
-		String dtoJson = objectMapper.writeValueAsString(qnARegisterDto);
-
-		MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.multipart("/registerQnA")
-				.file(image)
-				.content(dtoJson)
-				.contentType(MediaType.APPLICATION_JSON)
-				.contentType(MediaType.MULTIPART_FORM_DATA);
 
 
 	}
