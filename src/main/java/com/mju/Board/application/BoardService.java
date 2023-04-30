@@ -7,6 +7,7 @@ import com.mju.Board.presentation.dto.faqdto.FAQSearchDto;
 import com.mju.Board.presentation.dto.faqdto.FAQUpdateDto;
 import com.mju.Board.presentation.dto.qnadto.QnARegisterDto;
 import com.mju.Board.presentation.dto.qnadto.QnAupdateDto;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -28,13 +29,13 @@ public interface BoardService {
 
     public List<FAQBoard> searchFaq(FAQSearchDto faqSearchDto);
 
-    public void registerQnAGeneral(QnARegisterDto qnARegisterDto);
+    public void registerQnA(QnARegisterDto qnARegisterDto, MultipartFile image);
 
     public List<QuestionBoard> getQnABoardList();
 
     public void deleteQnA(Long questionIndex);
 
-    public void updateQnA(Long questionIndex, QnAupdateDto qnAupdateDto);
+    public void updateQnA(Long questionIndex, QnAupdateDto qnAupdateDto, MultipartFile image);
 
-    public FAQBoard findByFAQId(long faqIndex);
+    public QuestionBoard getQnABoardOne(long questionIndex);
 }

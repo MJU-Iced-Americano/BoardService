@@ -8,4 +8,8 @@ import lombok.Getter;
 public class QnARegisterDto {
     private String questionTitle;
     private String questionContent;
+
+    public QnARegisterDto() {
+
+    }
 }

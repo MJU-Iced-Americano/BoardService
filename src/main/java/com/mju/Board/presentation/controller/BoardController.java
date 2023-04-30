@@ -11,7 +11,9 @@ import com.mju.Board.presentation.dto.faqdto.FAQUpdateDto;
 import com.mju.Board.presentation.dto.qnadto.QnARegisterDto;
 import com.mju.Board.presentation.dto.qnadto.QnAupdateDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -42,7 +44,7 @@ public class BoardController {
         return responseService.getSuccessfulResult();
     }
     //Home에 TOP5 조회
-    @GetMapping("/show/faqHome")
+    @GetMapping("/show/Home")
     public CommonResult faqHome () {
         List<FAQBoard> faqTop5List = boardService.getFaqTop5();
         CommonResult commonResult = responseService.getListResult(faqTop5List);
@@ -66,13 +68,13 @@ public class BoardController {
         return commonResult;
     }
 
-    //선택한 FAQ게시물 보기
-    @GetMapping("/show/{faqIndex}")
-    public CommonResult findByFAQId(@PathVariable long faqIndex) {
-        FAQBoard findByFaqOne = boardService.findByFAQId(faqIndex);
-        CommonResult commonResult = responseService.getSingleResult(findByFaqOne);
-        return commonResult;
-    }
+//    //선택한 FAQ게시물 보기
+//    @GetMapping("/show/{faqIndex}")
+//    public CommonResult findByFAQId(@PathVariable long faqIndex) {
+//        FAQBoard findByFaqOne = boardService.findByFAQId(faqIndex);
+//        CommonResult commonResult = responseService.getSingleResult(findByFaqOne);
+//        return commonResult;
+//    }
 
     //[관리자]선택한것 삭제
     @DeleteMapping("/delete/{faqIndex}")
@@ -104,39 +106,44 @@ public class BoardController {
     }
     //////////////////////////////<문의게시판>//////////////////////////////
     //[관리자,강사진,수강생]Q&A 등록
-    @PostMapping("/registerQnA")
-    public CommonResult registerQnA(@RequestBody QnARegisterDto qnARegisterDto){
-        boardService.registerQnAGeneral(qnARegisterDto);
+    @PostMapping(value = "qna/registerQnA", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public CommonResult registerQnA(@RequestPart(value = "image", required = false) MultipartFile image, @RequestPart(value = "qnARegisterDto") QnARegisterDto qnARegisterDto) {
+        boardService.registerQnA(qnARegisterDto, image);
         return responseService.getSuccessfulResult();
     }
 
     //Q&A List 조회
-    @GetMapping("/show/listQnA")
+    @GetMapping("qna/show/listQnA")
     public CommonResult listQnA() {
         List<QuestionBoard> qnaBoardList = boardService.getQnABoardList();
         CommonResult commonResult = responseService.getListResult(qnaBoardList);
         return commonResult;
     }
+
+    //선택한 Q&A 보기
+    @GetMapping("qna/show/{questionIndex}")
+    public CommonResult findById(@PathVariable long questionIndex) {
+        QuestionBoard qnaBoardOne = boardService.getQnABoardOne(questionIndex);
+        CommonResult commonResult = responseService.getSingleResult(qnaBoardOne);
+        return commonResult;
+    }
+
     //[관리자,강사진,수강생]Q&A삭제
-    @DeleteMapping("question/delete/{questionIndex}")
+    @DeleteMapping("qna/delete/{questionIndex}")
     public CommonResult deleteQnA(@PathVariable Long questionIndex) {
         boardService.deleteQnA(questionIndex);
         return responseService.getSuccessfulResult();
     }
 
     //[관리자,강사진,수강생]Q&A업데이트
-    @PutMapping("question/update/{questionIndex}")
-    public CommonResult updateFaq(@PathVariable Long questionIndex, @RequestBody QnAupdateDto qnAupdateDto) {
-        boardService.updateQnA(questionIndex, qnAupdateDto);
+    @PutMapping(value = "qna/update/{questionIndex}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public CommonResult updateFaq(@PathVariable Long questionIndex, @RequestPart(value = "image", required = false) MultipartFile image, @RequestPart(value = "qnARegisterDto") QnAupdateDto qnAupdateDto) {
+        boardService.updateQnA(questionIndex, qnAupdateDto, image);
         return responseService.getSuccessfulResult();
     }
 
 
-    //선택한 게시물 보기
-//    @GetMapping("show/{faqIndex}")
-//    public FAQFindByIdDto findById(@PathVariable long faqIndex) {
-//        return boardService.findById(faqIndex);
-//    }
+
 
 
 }

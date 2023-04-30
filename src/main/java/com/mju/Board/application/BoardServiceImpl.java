@@ -1,11 +1,13 @@
 package com.mju.Board.application;
 
 import com.mju.Board.domain.model.Exception.ExceptionList;
+import com.mju.Board.domain.model.Exception.QnABoardNotFindException;
 import com.mju.Board.domain.model.FAQBoard;
 import com.mju.Board.domain.model.QuestionBoard;
 import com.mju.Board.domain.repository.FAQBoardRepository;
 import com.mju.Board.domain.model.Exception.FaqBoardNotFindException;
 import com.mju.Board.domain.repository.QuestionBoardRepository;
+import com.mju.Board.domain.service.S3Service;
 import com.mju.Board.presentation.dto.faqdto.FAQRegisterDto;
 import com.mju.Board.presentation.dto.faqdto.FAQSearchDto;
 import com.mju.Board.presentation.dto.faqdto.FAQUpdateDto;
@@ -14,6 +16,7 @@ import com.mju.Board.presentation.dto.qnadto.QnAupdateDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -63,17 +66,7 @@ public class BoardServiceImpl implements BoardService{
         }
     }
 
-    @Override
-    @Transactional
-    public FAQBoard findByFAQId(long faqIndex) {
-        Optional<FAQBoard> findByFAQ = faqBoardRepository.findById(faqIndex);
-        if (findByFAQ.isPresent()) {
-            FAQBoard faqBoardOne = findByFAQ.get();
-            return faqBoardOne;
-        }else{
-            throw new FaqBoardNotFindException(ExceptionList.FAQBOARD_NOT_FIND);
-        }
-    }
+
     @Override
     @Transactional
     public List<FAQBoard> getGeneralFAQBoardList() {
@@ -145,12 +138,19 @@ public class BoardServiceImpl implements BoardService{
 
 
     //////////////////////////////<문의게시판>//////////////////////////////
+
+    private final S3Service s3Service;
     @Override
     @Transactional
-    public void registerQnAGeneral(QnARegisterDto qnARegisterDto) {
+    public void registerQnA(QnARegisterDto qnARegisterDto, MultipartFile image) {
+        String imageUrl = null;
+        if (image != null) {
+            imageUrl = s3Service.uploadImageToS3(image);
+        }
         QuestionBoard questionBoard = QuestionBoard.builder()
                 .questionTitle(qnARegisterDto.getQuestionTitle())
                 .questionContent(qnARegisterDto.getQuestionContent())
+                .imageUrl(imageUrl)
                 .build();
         questionBoardRepository.save(questionBoard);
     }
@@ -162,32 +162,56 @@ public class BoardServiceImpl implements BoardService{
         if (!questionBoardList.isEmpty()) {
             return questionBoardList;
         }else{
-            throw new FaqBoardNotFindException(ExceptionList.FAQBOARD_NOT_FINDTYPE_EDUCATION);
+            throw new QnABoardNotFindException(ExceptionList.QNABOARD_NOT_EXISTENT_ALL);
         }
     }
 
     @Override
     @Transactional
     public void deleteQnA(Long questionIndex) {
-        Optional<QuestionBoard> questionBoard = questionBoardRepository.findById(questionIndex);
-        if (questionBoard.isPresent()) {
+        Optional<QuestionBoard> optionalQuestionBoard = questionBoardRepository.findById(questionIndex);
+        if (optionalQuestionBoard.isPresent()) {
+            QuestionBoard questionBoard = optionalQuestionBoard.get();
+            String imageUrl = questionBoard.getImageUrl();
+            if (imageUrl != null) {
+                s3Service.deleteImageFromS3(imageUrl);
+            }
             questionBoardRepository.deleteById(questionIndex);
         } else {
-            throw new FaqBoardNotFindException(ExceptionList.FAQBOARD_NOT_EXISTENT_DELETE);
+            throw new QnABoardNotFindException(ExceptionList.QNABOARD_NOT_EXISTENT_DELETE);
         }
     }
 
 
     @Override
     @Transactional
-    public void updateQnA(Long questionIndex, QnAupdateDto qnAupdateDto) {
+    public void updateQnA(Long questionIndex, QnAupdateDto qnAupdateDto, MultipartFile image) {
         Optional<QuestionBoard> optionalQuestionBoard = questionBoardRepository.findById(questionIndex);
         if (optionalQuestionBoard.isPresent()) {
             QuestionBoard questionBoard = optionalQuestionBoard.get();
             questionBoard.questionUpdate(qnAupdateDto.getQuestionTitle(), qnAupdateDto.getQuestionContent());
+            if (image != null) {
+                if (questionBoard.getImageUrl() != null) {
+                    s3Service.deleteImageFromS3(questionBoard.getImageUrl());
+                }
+                String imageUrl = s3Service.uploadImageToS3(image);
+                questionBoard.updateImageUrl(imageUrl);
+            }
             questionBoardRepository.save(questionBoard);
+        } else {
+            throw new QnABoardNotFindException(ExceptionList.QNABOARD_NOT_EXISTENT_UPDATE);
+        }
+    }
+
+    @Override
+    @Transactional
+    public QuestionBoard getQnABoardOne(long questionIndex) {
+        Optional<QuestionBoard> questionBoard = questionBoardRepository.findById(questionIndex);
+        if (questionBoard.isPresent()) {
+            QuestionBoard questionBoardOne = questionBoard.get();
+            return questionBoardOne;
         }else{
-            throw new FaqBoardNotFindException(ExceptionList.FAQBOARD_NOT_EXISTENT_UPDATE);
+            throw new FaqBoardNotFindException(ExceptionList.QNABOARD_NOT_FIND_ONE);
         }
     }
 
