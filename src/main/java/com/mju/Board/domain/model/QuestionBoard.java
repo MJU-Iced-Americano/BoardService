@@ -1,12 +1,13 @@
 package com.mju.Board.domain.model;
 
-import com.mju.Board.domain.model.State.AnswerState;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -14,10 +15,9 @@ import java.time.LocalDateTime;
 @Table(name = "questionboard")
 public class QuestionBoard {
     @Builder
-    public QuestionBoard(String questionTitle, String questionContent, String imageUrl){
+    public QuestionBoard(String questionTitle, String questionContent){
         this.questionTitle= questionTitle;
         this.questionContent = questionContent;
-        this.imageUrl = imageUrl;
     }
 
     @Id
@@ -27,8 +27,8 @@ public class QuestionBoard {
     @Column(name = "question_title")
     private String questionTitle;
 
-    @Column(name = "image_url") // 데이터베이스 테이블 컬럼 이름 설정
-    private String imageUrl; // 이미지 URL
+    @OneToMany(mappedBy = "questionBoard", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<QuestionImage> questionImages = new ArrayList<>();
 
     @Column(name = "question_content")
     private String questionContent;
@@ -56,7 +56,22 @@ public class QuestionBoard {
         this.updatedAt = LocalDateTime.now();//객체 불변성이 깨지지않게 이 객체안에서만 변동을 주는것.
     }
 
-    public void updateImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+//    public void updateImageUrl(String imageUrl) {
+//        this.imageUrl = imageUrl;
+//    }
+    public void addImage(String imageUrl) {
+        QuestionImage questionImage = new QuestionImage(imageUrl, this);
+        this.questionImages.add(questionImage);
+    }
+
+    public void updateImages(List<String> imageUrls) {
+        this.questionImages.clear();
+        for (String imageUrl : imageUrls) {
+            addImage(imageUrl);
+        }
+    }
+    public void removeImage(QuestionImage questionImage) {
+        this.questionImages.remove(questionImage);
+        questionImage.initialization();
     }
 }

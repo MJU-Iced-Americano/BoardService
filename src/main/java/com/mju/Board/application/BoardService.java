@@ -29,13 +29,13 @@ public interface BoardService {
 
     public List<FAQBoard> searchFaq(FAQSearchDto faqSearchDto);
 
-    public void registerQnA(QnARegisterDto qnARegisterDto, MultipartFile image);
+    public void registerQnA(QnARegisterDto qnARegisterDto, List<MultipartFile> images);
 
     public List<QuestionBoard> getQnABoardList();
 
     public void deleteQnA(Long questionIndex);
 
-    public void updateQnA(Long questionIndex, QnAupdateDto qnAupdateDto, MultipartFile image);
+    public void updateQnA(Long questionIndex, QnAupdateDto qnAupdateDto, List<MultipartFile> images);
 
     public QuestionBoard getQnABoardOne(long questionIndex);
 }

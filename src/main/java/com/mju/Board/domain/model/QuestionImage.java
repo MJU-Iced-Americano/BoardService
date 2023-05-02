@@ -7,13 +7,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Image {
+@Table(name = "questionimage")
+public class QuestionImage {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long imageIndex;
 
+    @Column(name = "image_url")
     private String imageUrl;
 
     @ManyToOne
@@ -21,8 +24,12 @@ public class Image {
     private QuestionBoard questionBoard;
 
     @Builder
-    public Image(String imageUrl, QuestionBoard questionBoard) {
+    public QuestionImage(String imageUrl, QuestionBoard questionBoard) {
         this.imageUrl = imageUrl;
         this.questionBoard = questionBoard;
+    }
+
+    public void initialization() {
+        this.questionBoard = null;
     }
 }

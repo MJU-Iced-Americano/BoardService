@@ -107,8 +107,8 @@ public class BoardController {
     //////////////////////////////<문의게시판>//////////////////////////////
     //[관리자,강사진,수강생]Q&A 등록
     @PostMapping(value = "qna/registerQnA", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public CommonResult registerQnA(@RequestPart(value = "image", required = false) MultipartFile image, @RequestPart(value = "qnARegisterDto") QnARegisterDto qnARegisterDto) {
-        boardService.registerQnA(qnARegisterDto, image);
+    public CommonResult registerQnA(@RequestPart(value = "image", required = false) List<MultipartFile> images, @RequestPart(value = "qnARegisterDto") QnARegisterDto qnARegisterDto) {
+        boardService.registerQnA(qnARegisterDto, images);
         return responseService.getSuccessfulResult();
     }
 
@@ -137,8 +137,8 @@ public class BoardController {
 
     //[관리자,강사진,수강생]Q&A업데이트
     @PutMapping(value = "qna/update/{questionIndex}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public CommonResult updateFaq(@PathVariable Long questionIndex, @RequestPart(value = "image", required = false) MultipartFile image, @RequestPart(value = "qnARegisterDto") QnAupdateDto qnAupdateDto) {
-        boardService.updateQnA(questionIndex, qnAupdateDto, image);
+    public CommonResult updateFaq(@PathVariable Long questionIndex, @RequestPart(value = "image", required = false) List<MultipartFile> images, @RequestPart(value = "qnARegisterDto") QnAupdateDto qnAupdateDto) {
+        boardService.updateQnA(questionIndex, qnAupdateDto, images);
         return responseService.getSuccessfulResult();
     }
 

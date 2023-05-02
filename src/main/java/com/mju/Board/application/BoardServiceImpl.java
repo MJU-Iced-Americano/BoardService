@@ -3,6 +3,7 @@ package com.mju.Board.application;
 import com.mju.Board.domain.model.Exception.ExceptionList;
 import com.mju.Board.domain.model.Exception.QnABoardNotFindException;
 import com.mju.Board.domain.model.FAQBoard;
+import com.mju.Board.domain.model.QuestionImage;
 import com.mju.Board.domain.model.QuestionBoard;
 import com.mju.Board.domain.repository.FAQBoardRepository;
 import com.mju.Board.domain.model.Exception.FaqBoardNotFindException;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -92,7 +94,6 @@ public class BoardServiceImpl implements BoardService{
     @Transactional
     public void updateFaq(Long faqIndex, FAQUpdateDto faqUpdateDto) {
         Optional<FAQBoard> optionalFaqBoard = faqBoardRepository.findById(faqIndex);
-//        FAQBoard faqBoard = optionalFaqBoard.orElseThrow(() -> new Exception("FAQBoard not found"));
         if (optionalFaqBoard.isPresent()) {
         FAQBoard faqBoard = optionalFaqBoard.get();
         faqBoard.faqUpdate(faqUpdateDto.getFaqTitle(), faqUpdateDto.getFaqContent(), faqUpdateDto.isChecked());
@@ -142,16 +143,18 @@ public class BoardServiceImpl implements BoardService{
     private final S3Service s3Service;
     @Override
     @Transactional
-    public void registerQnA(QnARegisterDto qnARegisterDto, MultipartFile image) {
-        String imageUrl = null;
-        if (image != null) {
-            imageUrl = s3Service.uploadImageToS3(image);
-        }
+    public void registerQnA(QnARegisterDto qnARegisterDto, List<MultipartFile> images) {
         QuestionBoard questionBoard = QuestionBoard.builder()
                 .questionTitle(qnARegisterDto.getQuestionTitle())
                 .questionContent(qnARegisterDto.getQuestionContent())
-                .imageUrl(imageUrl)
                 .build();
+
+        if (!images.isEmpty()) {
+            for (MultipartFile image : images) {
+                String imageUrl = s3Service.uploadImageToS3(image);
+                questionBoard.addImage(imageUrl);
+            }
+        }
         questionBoardRepository.save(questionBoard);
     }
 
@@ -172,9 +175,14 @@ public class BoardServiceImpl implements BoardService{
         Optional<QuestionBoard> optionalQuestionBoard = questionBoardRepository.findById(questionIndex);
         if (optionalQuestionBoard.isPresent()) {
             QuestionBoard questionBoard = optionalQuestionBoard.get();
-            String imageUrl = questionBoard.getImageUrl();
-            if (imageUrl != null) {
-                s3Service.deleteImageFromS3(imageUrl);
+            List<QuestionImage> questionImages = questionBoard.getQuestionImages();
+            if (!questionImages.isEmpty()) {
+                for (QuestionImage questionImage : questionImages) {
+                    String imageUrl = questionImage.getImageUrl();
+                    if (imageUrl != null) {
+                        s3Service.deleteImageFromS3(imageUrl);
+                    }
+                }
             }
             questionBoardRepository.deleteById(questionIndex);
         } else {
@@ -182,20 +190,33 @@ public class BoardServiceImpl implements BoardService{
         }
     }
 
-
     @Override
     @Transactional
-    public void updateQnA(Long questionIndex, QnAupdateDto qnAupdateDto, MultipartFile image) {
+    public void updateQnA(Long questionIndex, QnAupdateDto qnAupdateDto, List<MultipartFile> images) {
         Optional<QuestionBoard> optionalQuestionBoard = questionBoardRepository.findById(questionIndex);
         if (optionalQuestionBoard.isPresent()) {
             QuestionBoard questionBoard = optionalQuestionBoard.get();
             questionBoard.questionUpdate(qnAupdateDto.getQuestionTitle(), qnAupdateDto.getQuestionContent());
-            if (image != null) {
-                if (questionBoard.getImageUrl() != null) {
-                    s3Service.deleteImageFromS3(questionBoard.getImageUrl());
+
+            if (!images.isEmpty()) {
+                // 기존 이미지 삭제
+                List<QuestionImage> originalQuestionImages = questionBoard.getQuestionImages();
+                List<QuestionImage> imagesToDelete = new ArrayList<>(originalQuestionImages);
+                for (QuestionImage questionImage : imagesToDelete) {
+                    String imageUrl = questionImage.getImageUrl();
+                    if (imageUrl != null) {
+                        s3Service.deleteImageFromS3(imageUrl);
+                    }
+                    questionBoard.removeImage(questionImage);
                 }
-                String imageUrl = s3Service.uploadImageToS3(image);
-                questionBoard.updateImageUrl(imageUrl);
+                // 새 이미지 추가 , Url 새로 추가
+                List<String> newImageUrls = new ArrayList<>();
+                for (MultipartFile image : images) {
+                    String imageUrl = s3Service.uploadImageToS3(image);
+                    newImageUrls.add(imageUrl);
+                }
+                questionBoard.updateImages(newImageUrls);//추상화를 위해
+
             }
             questionBoardRepository.save(questionBoard);
         } else {
