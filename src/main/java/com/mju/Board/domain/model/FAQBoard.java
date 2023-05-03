@@ -49,8 +49,7 @@ public class FAQBoard {
 
     @Column(name = "is_checked")
     private boolean isChecked;
-
-    @Column(name = "is_new")
+    @Transient
     private boolean isNew;
 
 
