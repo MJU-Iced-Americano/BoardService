@@ -56,9 +56,10 @@ public class FAQBoard {
 
     @PrePersist // 데이터 생성이 이루어질때 사전 작업
     public void prePersist() {
-//        this.createdAt = LocalDateTime.of(2023, 4, 16, 0, 0, 0);
+//        this.createdAt = LocalDateTime.of(2023, 4, 27, 0, 0, 0);
         this.createdAt = LocalDateTime.now();
         this.updatedAt = this.createdAt;
+        this.isNew = this.createdAt.isAfter(LocalDateTime.now().minusDays(7));
     }
 
     public void faqUpdate(String faqTitle, String faqContent, boolean isChecked) {

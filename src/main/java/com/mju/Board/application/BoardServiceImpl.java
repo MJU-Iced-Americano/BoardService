@@ -41,8 +41,6 @@ public class BoardServiceImpl implements BoardService{
                 .isChecked(faqRegisterDto.isChecked())
                 .build();
         faqBoardRepository.save(faqBoard);
-        faqBoard.isRegisterNew();
-        faqBoardRepository.save(faqBoard);
     }
     @Override
     @Transactional
@@ -53,8 +51,6 @@ public class BoardServiceImpl implements BoardService{
                     .type(FAQBoard.FAQType.EDUCATION)
                     .isChecked(faqRegisterDto.isChecked())
                     .build();
-            faqBoardRepository.save(faqBoard);
-            faqBoard.isRegisterNew();
             faqBoardRepository.save(faqBoard);
     }
     @Override
@@ -75,6 +71,9 @@ public class BoardServiceImpl implements BoardService{
 //        CommonResult commonResult = responseService.getListResult(faqBoardRepository.findByType(FAQBoard.FAQType.GENERAL_MEMBER));
         List<FAQBoard> generalFAQBoardList = faqBoardRepository.findByType(FAQBoard.FAQType.GENERAL_MEMBER);
         if (!generalFAQBoardList.isEmpty()) {
+            for (FAQBoard faqBoard : generalFAQBoardList) {
+                faqBoard.isRegisterNew();
+            }
             return generalFAQBoardList;
         }else {
             throw new FaqBoardNotFindException(ExceptionList.FAQBOARD_NOT_FINDTYPE_GENERAL_MEMBER);
@@ -85,7 +84,10 @@ public class BoardServiceImpl implements BoardService{
     public List<FAQBoard> getAduFAQBoardList() {
         List<FAQBoard> aduFAQBoardList = faqBoardRepository.findByType(FAQBoard.FAQType.EDUCATION);
         if (!aduFAQBoardList.isEmpty()) {
-        return aduFAQBoardList;
+            for (FAQBoard faqBoard : aduFAQBoardList) {
+                faqBoard.isRegisterNew();
+            }
+            return aduFAQBoardList;
         }else{
             throw new FaqBoardNotFindException(ExceptionList.FAQBOARD_NOT_FINDTYPE_EDUCATION);
         }
