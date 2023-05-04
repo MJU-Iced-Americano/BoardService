@@ -33,26 +33,16 @@ public class BoardServiceImpl implements BoardService{
     private final QuestionBoardRepository questionBoardRepository;
     @Override
     @Transactional
-    public void registerFaqGeneral(FAQRegisterDto faqRegisterDto) {
+    public void registerFaq(FAQRegisterDto faqRegisterDto) {
         FAQBoard faqBoard = FAQBoard.builder()
                 .faqTitle(faqRegisterDto.getFaqTitle())
                 .faqContent(faqRegisterDto.getFaqContent())
-                .type(FAQBoard.FAQType.GENERAL_MEMBER)
+                .type(faqRegisterDto.getType())
                 .isChecked(faqRegisterDto.isChecked())
                 .build();
         faqBoardRepository.save(faqBoard);
     }
-    @Override
-    @Transactional
-    public void registerFaqAdu(FAQRegisterDto faqRegisterDto) {
-            FAQBoard faqBoard = FAQBoard.builder()
-                    .faqTitle(faqRegisterDto.getFaqTitle())
-                    .faqContent(faqRegisterDto.getFaqContent())
-                    .type(FAQBoard.FAQType.EDUCATION)
-                    .isChecked(faqRegisterDto.isChecked())
-                    .build();
-            faqBoardRepository.save(faqBoard);
-    }
+
     @Override
     @Transactional
     public List<FAQBoard> getFaqTop5() {
@@ -98,7 +88,7 @@ public class BoardServiceImpl implements BoardService{
         Optional<FAQBoard> optionalFaqBoard = faqBoardRepository.findById(faqIndex);
         if (optionalFaqBoard.isPresent()) {
         FAQBoard faqBoard = optionalFaqBoard.get();
-        faqBoard.faqUpdate(faqUpdateDto.getFaqTitle(), faqUpdateDto.getFaqContent(), faqUpdateDto.isChecked());
+        faqBoard.faqUpdate(faqUpdateDto.getFaqTitle(), faqUpdateDto.getFaqContent(), faqUpdateDto.isChecked(), faqUpdateDto.getType());
         faqBoardRepository.save(faqBoard);
         }else{
             throw new FaqBoardNotFindException(ExceptionList.FAQBOARD_NOT_EXISTENT_UPDATE);
@@ -149,6 +139,7 @@ public class BoardServiceImpl implements BoardService{
         QuestionBoard questionBoard = QuestionBoard.builder()
                 .questionTitle(qnARegisterDto.getQuestionTitle())
                 .questionContent(qnARegisterDto.getQuestionContent())
+                .type(qnARegisterDto.getType())
                 .build();
 
         if (!images.isEmpty()) {
@@ -198,9 +189,9 @@ public class BoardServiceImpl implements BoardService{
         Optional<QuestionBoard> optionalQuestionBoard = questionBoardRepository.findById(questionIndex);
         if (optionalQuestionBoard.isPresent()) {
             QuestionBoard questionBoard = optionalQuestionBoard.get();
-            questionBoard.questionUpdate(qnAupdateDto.getQuestionTitle(), qnAupdateDto.getQuestionContent());
+            questionBoard.questionUpdate(qnAupdateDto.getQuestionTitle(), qnAupdateDto.getQuestionContent(), qnAupdateDto.getType());
 
-            if (!images.isEmpty()) {
+            if (images != null &&!images.isEmpty()) {
                 // 기존 이미지 삭제
                 List<QuestionImage> originalQuestionImages = questionBoard.getQuestionImages();
                 List<QuestionImage> imagesToDelete = new ArrayList<>(originalQuestionImages);

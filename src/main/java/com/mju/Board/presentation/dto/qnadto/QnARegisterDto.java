@@ -1,5 +1,6 @@
 package com.mju.Board.presentation.dto.qnadto;
 
+import com.mju.Board.domain.model.QuestionBoard;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -8,8 +9,5 @@ import lombok.Getter;
 public class QnARegisterDto {
     private String questionTitle;
     private String questionContent;
-
-    public QnARegisterDto() {
-
-    }
+    private QuestionBoard.QuestionType type;
 }

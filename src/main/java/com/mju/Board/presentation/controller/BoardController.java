@@ -33,18 +33,13 @@ public class BoardController {
     //요청값들을 자바 객체로 만드는 역할 presentation
     //////////////////////////<FAQ게시판>/////////////////////////////
     //[관리자]FAQ 등록
-    @PostMapping("/registerFaqGeneral")
-    public CommonResult registerFaqGeneral(@RequestBody FAQRegisterDto faqRegisterDto){
-        boardService.registerFaqGeneral(faqRegisterDto);
-        return responseService.getSuccessfulResult();
-    }
-    @PostMapping("/registerFaqAdu")
-    public CommonResult registerFaqAdu(@RequestBody FAQRegisterDto faqRegisterDto){
-        boardService.registerFaqAdu(faqRegisterDto);
+    @PostMapping("faq/register")
+    public CommonResult registerFaq(@RequestBody FAQRegisterDto faqRegisterDto){
+        boardService.registerFaq(faqRegisterDto);
         return responseService.getSuccessfulResult();
     }
     //Home에 TOP5 조회
-    @GetMapping("/show/Home")
+    @GetMapping("faq/show/Home")
     public CommonResult faqHome () {
         List<FAQBoard> faqTop5List = boardService.getFaqTop5();
         CommonResult commonResult = responseService.getListResult(faqTop5List);
@@ -52,7 +47,7 @@ public class BoardController {
     }
 
     //일반회원 FAQ 조회
-    @GetMapping("/show/listFaqGeneral")
+    @GetMapping("faq/show/listFaqGeneral")
     public CommonResult listFaqGeneral() {
 //      CommonResult commonResult = responseService.getListResult(faqBoardRepository.findByType(FAQBoard.FAQType.GENERAL_MEMBER));
         List<FAQBoard> generalFAQBoardList = boardService.getGeneralFAQBoardList();
@@ -61,23 +56,16 @@ public class BoardController {
     }
 
     //교육 FAQ 조회
-    @GetMapping("/show/listFaqAdu")
+        @GetMapping("faq/show/listFaqAdu")
     public CommonResult listFaqAdu() {
         List<FAQBoard> aduFaqBoardList = boardService.getAduFAQBoardList();
         CommonResult commonResult = responseService.getListResult(aduFaqBoardList);
         return commonResult;
     }
 
-//    //선택한 FAQ게시물 보기
-//    @GetMapping("/show/{faqIndex}")
-//    public CommonResult findByFAQId(@PathVariable long faqIndex) {
-//        FAQBoard findByFaqOne = boardService.findByFAQId(faqIndex);
-//        CommonResult commonResult = responseService.getSingleResult(findByFaqOne);
-//        return commonResult;
-//    }
 
     //[관리자]선택한것 삭제
-    @DeleteMapping("/delete/{faqIndex}")
+    @DeleteMapping("faq/delete/{faqIndex}")
     public CommonResult deleteFaq(@PathVariable Long faqIndex) throws Exception {
         boardService.deleteFaq(faqIndex);
         return responseService.getSuccessfulResult();
@@ -85,20 +73,20 @@ public class BoardController {
 
 
     //[관리자]FAQ 업데이트
-    @PutMapping("/update/{faqIndex}")
+    @PutMapping("faq/update/{faqIndex}")
     public CommonResult updateFaq(@PathVariable Long faqIndex, @RequestBody FAQUpdateDto faqUpdateDto) {
         boardService.updateFaq(faqIndex, faqUpdateDto);
         return responseService.getSuccessfulResult();
     }
 
     //[수강생]클릭한것 조회수 증가
-    @GetMapping("/countFaqClick/{faqIndex}")
+    @GetMapping("faq/countFaqClick/{faqIndex}")
     public CommonResult countFaqClick (@PathVariable Long faqIndex) {
         boardService.countFaqClick(faqIndex);
         return responseService.getSuccessfulResult();
     }
     //[관리자,강사진,수강생]제목, 내용으로 검색
-    @PostMapping("/search")
+    @PostMapping("faq/search")
     public CommonResult searchFaq (@RequestBody FAQSearchDto faqSearchDto) {
         List<FAQBoard> searchFAQBoardList = boardService.searchFaq(faqSearchDto);
         CommonResult commonResult = responseService.getListResult(searchFAQBoardList);
@@ -106,7 +94,7 @@ public class BoardController {
     }
     //////////////////////////////<문의게시판>//////////////////////////////
     //[관리자,강사진,수강생]Q&A 등록
-    @PostMapping(value = "qna/registerQnA", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "qna/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public CommonResult registerQnA(@RequestPart(value = "image", required = false) List<MultipartFile> images, @RequestPart(value = "qnARegisterDto") QnARegisterDto qnARegisterDto) {
         boardService.registerQnA(qnARegisterDto, images);
         return responseService.getSuccessfulResult();

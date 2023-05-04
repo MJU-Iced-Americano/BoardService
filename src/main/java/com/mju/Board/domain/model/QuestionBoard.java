@@ -14,10 +14,15 @@ import java.util.List;
 @Entity
 @Table(name = "questionboard")
 public class QuestionBoard {
+
+    public enum QuestionType {
+        GENERAL, LECTURE, PAYMENT;
+    }
     @Builder
-    public QuestionBoard(String questionTitle, String questionContent){
+    public QuestionBoard(String questionTitle, String questionContent, QuestionType type){
         this.questionTitle= questionTitle;
         this.questionContent = questionContent;
+        this.type = type;
     }
 
     @Id
@@ -39,6 +44,10 @@ public class QuestionBoard {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "question_type")
+    private QuestionBoard.QuestionType type;
+
 //    @Enumerated(EnumType.STRING)
 //    @Column(name = "Answer _state")
 //    private AnswerState answerState;
@@ -50,15 +59,13 @@ public class QuestionBoard {
         this.updatedAt = this.createdAt;
     }
 
-    public void questionUpdate(String questionTitle, String questionContent) {
+    public void questionUpdate(String questionTitle, String questionContent, QuestionType type) {
         this.questionTitle = questionTitle;
         this.questionContent = questionContent;
+        this.type = type;
         this.updatedAt = LocalDateTime.now();//객체 불변성이 깨지지않게 이 객체안에서만 변동을 주는것.
     }
 
-//    public void updateImageUrl(String imageUrl) {
-//        this.imageUrl = imageUrl;
-//    }
     public void addImage(String imageUrl) {
         QuestionImage questionImage = new QuestionImage(imageUrl, this);
         this.questionImages.add(questionImage);

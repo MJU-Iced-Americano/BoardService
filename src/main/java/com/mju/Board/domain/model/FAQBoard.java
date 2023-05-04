@@ -61,10 +61,11 @@ public class FAQBoard {
         this.isNew = this.createdAt.isAfter(LocalDateTime.now().minusDays(7));
     }
 
-    public void faqUpdate(String faqTitle, String faqContent, boolean isChecked) {
+    public void faqUpdate(String faqTitle, String faqContent, boolean isChecked, FAQType type) {
         this.faqTitle = faqTitle;
         this.faqContent = faqContent;
         this.isChecked = isChecked;
+        this.type = type;
         this.updatedAt = LocalDateTime.now();//객체 불변성이 깨지지않게 이 객체안에서만 변동을 주는것.
     }
 
@@ -73,6 +74,7 @@ public class FAQBoard {
     }
     public void isRegisterNew() {
         this.isNew = this.createdAt.isAfter(LocalDateTime.now().minusDays(7));
+        System.out.print(isNew);
     }
 
 

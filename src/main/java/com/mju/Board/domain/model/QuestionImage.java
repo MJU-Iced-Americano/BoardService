@@ -1,5 +1,6 @@
 package com.mju.Board.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +20,7 @@ public class QuestionImage {
     @Column(name = "image_url")
     private String imageUrl;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "question_index")
     private QuestionBoard questionBoard;
