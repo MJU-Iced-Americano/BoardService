@@ -36,3 +36,4 @@ out/
 ### VS Code ###
 .vscode/
 
+.aws/*             # .aws/ 디렉터리의 모든 파일 무시
