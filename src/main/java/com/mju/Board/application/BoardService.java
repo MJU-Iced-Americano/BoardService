@@ -48,4 +48,6 @@ public interface BoardService {
     public void updateCommend(Long commendIndex, QnACommendDto qnACommendDto);
 
     public List<QuestionCommend> getCommendList(Long questionIndex);
+
+    public void complaintCommend(Long commendIndex, QnAComplaintDto qnAComplaintDto);
 }

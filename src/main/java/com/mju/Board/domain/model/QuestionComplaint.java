@@ -18,10 +18,11 @@ public class QuestionComplaint {
     }
 
     @Builder
-    public QuestionComplaint(String complaintContent, ComplaintType type, QuestionBoard questionBoard){
+    public QuestionComplaint(String complaintContent, ComplaintType type, QuestionBoard questionBoard, QuestionCommend questionCommend){
         this.complaintContent= complaintContent;
         this.type = type;
         this.questionBoard = questionBoard;
+        this.questionCommend = questionCommend;
     }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -34,6 +35,11 @@ public class QuestionComplaint {
     @ManyToOne
     @JoinColumn(name = "question_index")
     private QuestionBoard questionBoard;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "commend_index")
+    private QuestionCommend questionCommend;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "complaint_type")

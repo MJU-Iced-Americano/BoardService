@@ -305,4 +305,23 @@ public class BoardServiceImpl implements BoardService{
             throw new QnABoardNotFindException(ExceptionList.QNABOARD_NOT_FIND_ONE);
         }
     }
+
+    @Override
+    @Transactional
+    public void complaintCommend(Long commendIndex, QnAComplaintDto qnAComplaintDto) {
+        Optional<QuestionCommend> optionalQuestionCommend = questionCommendRepository.findById(commendIndex);
+        if (optionalQuestionCommend.isPresent()) {
+            QuestionCommend questionCommend = optionalQuestionCommend.get();
+            QuestionBoard questionBoard = questionCommend.getQuestionBoard();
+            QuestionComplaint questionComplaint = QuestionComplaint.builder()
+                    .complaintContent(qnAComplaintDto.getComplaintContent())
+                    .type(qnAComplaintDto.getType())
+                    .questionBoard(questionBoard)
+                    .questionCommend(questionCommend)
+                    .build();
+            questionComplaintRepository.save(questionComplaint);
+        }else{
+            throw new QnABoardNotFindException(ExceptionList.QNABOARD_NOT_FIND_ONE);
+        }
+    }
 }

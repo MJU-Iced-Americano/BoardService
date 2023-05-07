@@ -138,7 +138,7 @@ public class BoardController {
 
     //[수강생]해당 문의 Q&A신고
     @PostMapping(value = "qna/complaint/{questionIndex}")
-    public CommonResult complaint(@PathVariable Long questionIndex, @RequestBody QnAComplaintDto qnAComplaintDto/*, @RequestHeader("Authorization") String token*/) {
+    public CommonResult complaintQnA(@PathVariable Long questionIndex, @RequestBody QnAComplaintDto qnAComplaintDto/*, @RequestHeader("Authorization") String token*/) {
 //        Long complainerIndex = authService.getUserIdFromToken(token);//AuthService는 사용자 인증을 처리하는 서비스로 나중에 이걸로 사용자 인증 필요
 //        qnAComplaintDto.setComplainerIndex(complainerIndex);
         boardService.complaintQnA(questionIndex, qnAComplaintDto);
@@ -175,7 +175,14 @@ public class BoardController {
         CommonResult commonResult = responseService.getListResult(commendList);
         return commonResult;
     }
-
+    //[수강생]답변 신고
+    @PostMapping(value = "qna/commend/complaint/{commendIndex}")
+    public CommonResult complaintCommend(@PathVariable Long commendIndex, @RequestBody QnAComplaintDto qnAComplaintDto/*, @RequestHeader("Authorization") String token*/) {
+//        Long complainerIndex = authService.getUserIdFromToken(token);//AuthService는 사용자 인증을 처리하는 서비스로 나중에 이걸로 사용자 인증 필요
+//        qnAComplaintDto.setComplainerIndex(complainerIndex);
+        boardService.complaintCommend(commendIndex, qnAComplaintDto);
+        return responseService.getSuccessfulResult();
+    }
 
 
 }
