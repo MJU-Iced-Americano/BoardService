@@ -15,6 +15,9 @@ import java.util.List;
 @Table(name = "questionboard")
 public class QuestionBoard {
 
+
+
+
     public enum QuestionType {
         GENERAL, LECTURE, PAYMENT;
     }
@@ -33,7 +36,13 @@ public class QuestionBoard {
     private String questionTitle;
 
     @OneToMany(mappedBy = "questionBoard", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<QuestionImage> questionImages = new ArrayList<>();
+    private List<QuestionImage> questionImageList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "questionBoard", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<QuestionComplaint> questionComplaintList = new ArrayList<>(); //아직은 신고 테이블에서만 처리해서 사용을 안함.
+
+    @OneToMany(mappedBy = "questionBoard", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<QuestionCommend> questionCommendList = new ArrayList<>(); //하나씩 등록, 삭제, 수정을 할거라 필요없을것같음.근데 조회땜에 있어야 하나? 우선 보류
 
     @Column(name = "question_content")
     private String questionContent;
@@ -68,17 +77,28 @@ public class QuestionBoard {
 
     public void addImage(String imageUrl) {
         QuestionImage questionImage = new QuestionImage(imageUrl, this);
-        this.questionImages.add(questionImage);
+        this.questionImageList.add(questionImage);
     }
 
     public void updateImages(List<String> imageUrls) {
-        this.questionImages.clear();
+        this.questionImageList.clear();
         for (String imageUrl : imageUrls) {
             addImage(imageUrl);
         }
     }
     public void removeImage(QuestionImage questionImage) {
-        this.questionImages.remove(questionImage);
+        this.questionImageList.remove(questionImage);
         questionImage.initialization();
+    }
+    public List<QuestionCommend> getCommendList() {
+        return this.questionCommendList;
+    }
+    public void addCommendList(QuestionCommend questionCommend) {
+        this.questionCommendList.add(questionCommend);
+        questionCommend.initialization(this);
+    }
+    public void removeCommendList(QuestionCommend questionCommend) {
+        this.questionCommendList.remove(questionCommend);
+        questionCommend.initialization(null);
     }
 }

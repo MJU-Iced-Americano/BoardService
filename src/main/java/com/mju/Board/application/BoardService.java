@@ -2,9 +2,12 @@ package com.mju.Board.application;
 
 import com.mju.Board.domain.model.FAQBoard;
 import com.mju.Board.domain.model.QuestionBoard;
+import com.mju.Board.domain.model.QuestionCommend;
 import com.mju.Board.presentation.dto.faqdto.FAQRegisterDto;
 import com.mju.Board.presentation.dto.faqdto.FAQSearchDto;
 import com.mju.Board.presentation.dto.faqdto.FAQUpdateDto;
+import com.mju.Board.presentation.dto.qnadto.QnACommendDto;
+import com.mju.Board.presentation.dto.qnadto.QnAComplaintDto;
 import com.mju.Board.presentation.dto.qnadto.QnARegisterDto;
 import com.mju.Board.presentation.dto.qnadto.QnAupdateDto;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,4 +38,14 @@ public interface BoardService {
     public void updateQnA(Long questionIndex, QnAupdateDto qnAupdateDto, List<MultipartFile> images);
 
     public QuestionBoard getQnABoardOne(long questionIndex);
+
+    public void complaintQnA(Long questionIndex, QnAComplaintDto qnAComplaintDto);
+
+    public void registerCommend(Long questionIndex, QnACommendDto qnACommendDto);
+
+    public void deleteCommend(Long commendIndex);
+
+    public void updateCommend(Long commendIndex, QnACommendDto qnACommendDto);
+
+    public List<QuestionCommend> getCommendList(Long questionIndex);
 }

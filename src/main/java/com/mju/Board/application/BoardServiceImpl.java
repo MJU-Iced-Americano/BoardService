@@ -1,17 +1,19 @@
 package com.mju.Board.application;
 
+import com.mju.Board.domain.model.*;
 import com.mju.Board.domain.model.Exception.ExceptionList;
 import com.mju.Board.domain.model.Exception.QnABoardNotFindException;
-import com.mju.Board.domain.model.FAQBoard;
-import com.mju.Board.domain.model.QuestionImage;
-import com.mju.Board.domain.model.QuestionBoard;
 import com.mju.Board.domain.repository.FAQBoardRepository;
 import com.mju.Board.domain.model.Exception.FaqBoardNotFindException;
 import com.mju.Board.domain.repository.QuestionBoardRepository;
+import com.mju.Board.domain.repository.QuestionCommendRepository;
+import com.mju.Board.domain.repository.QuestionComplaintRepository;
 import com.mju.Board.domain.service.S3Service;
 import com.mju.Board.presentation.dto.faqdto.FAQRegisterDto;
 import com.mju.Board.presentation.dto.faqdto.FAQSearchDto;
 import com.mju.Board.presentation.dto.faqdto.FAQUpdateDto;
+import com.mju.Board.presentation.dto.qnadto.QnACommendDto;
+import com.mju.Board.presentation.dto.qnadto.QnAComplaintDto;
 import com.mju.Board.presentation.dto.qnadto.QnARegisterDto;
 import com.mju.Board.presentation.dto.qnadto.QnAupdateDto;
 import jakarta.transaction.Transactional;
@@ -31,6 +33,9 @@ public class BoardServiceImpl implements BoardService{
     //////////////////////////<FAQ게시판>/////////////////////////////
     private final FAQBoardRepository faqBoardRepository;
     private final QuestionBoardRepository questionBoardRepository;
+    private final QuestionComplaintRepository questionComplaintRepository;
+    private final QuestionCommendRepository questionCommendRepository;
+
     @Override
     @Transactional
     public void registerFaq(FAQRegisterDto faqRegisterDto) {
@@ -126,10 +131,6 @@ public class BoardServiceImpl implements BoardService{
             throw new FaqBoardNotFindException(ExceptionList.FAQBOARD_NOT_EXISTENT_KEYWORD);
         }
     }
-
-
-
-
     //////////////////////////////<문의게시판>//////////////////////////////
 
     private final S3Service s3Service;
@@ -168,7 +169,7 @@ public class BoardServiceImpl implements BoardService{
         Optional<QuestionBoard> optionalQuestionBoard = questionBoardRepository.findById(questionIndex);
         if (optionalQuestionBoard.isPresent()) {
             QuestionBoard questionBoard = optionalQuestionBoard.get();
-            List<QuestionImage> questionImages = questionBoard.getQuestionImages();
+            List<QuestionImage> questionImages = questionBoard.getQuestionImageList();
             if (!questionImages.isEmpty()) {
                 for (QuestionImage questionImage : questionImages) {
                     String imageUrl = questionImage.getImageUrl();
@@ -193,7 +194,7 @@ public class BoardServiceImpl implements BoardService{
 
             if (images != null &&!images.isEmpty()) {
                 // 기존 이미지 삭제
-                List<QuestionImage> originalQuestionImages = questionBoard.getQuestionImages();
+                List<QuestionImage> originalQuestionImages = questionBoard.getQuestionImageList();
                 List<QuestionImage> imagesToDelete = new ArrayList<>(originalQuestionImages);
                 for (QuestionImage questionImage : imagesToDelete) {
                     String imageUrl = questionImage.getImageUrl();
@@ -225,9 +226,83 @@ public class BoardServiceImpl implements BoardService{
             QuestionBoard questionBoardOne = questionBoard.get();
             return questionBoardOne;
         }else{
-            throw new FaqBoardNotFindException(ExceptionList.QNABOARD_NOT_FIND_ONE);
+            throw new QnABoardNotFindException(ExceptionList.QNABOARD_NOT_FIND_ONE);
         }
     }
 
+    @Override
+    @Transactional
+    public void complaintQnA(Long questionIndex, QnAComplaintDto qnAComplaintDto) {
+        Optional<QuestionBoard> optionalQuestionBoard = questionBoardRepository.findById(questionIndex);
+        if (optionalQuestionBoard.isPresent()) {
+            QuestionBoard questionBoard = optionalQuestionBoard.get();
+            QuestionComplaint questionComplaint = QuestionComplaint.builder()
+                    .complaintContent(qnAComplaintDto.getComplaintContent())
+                    .type(qnAComplaintDto.getType())
+                    .questionBoard(questionBoard)
+                    .build();
+            questionComplaintRepository.save(questionComplaint);
+        }else{
+            throw new QnABoardNotFindException(ExceptionList.QNABOARD_NOT_FIND_ONE);
+        }
+    }
+    //////////////////////////////<문의답변게시판>//////////////////////////////
+    @Override
+    @Transactional
+    public void registerCommend(Long questionIndex, QnACommendDto qnACommendDto) {
+        Optional<QuestionBoard> optionalQuestionBoard = questionBoardRepository.findById(questionIndex);
+        if (optionalQuestionBoard.isPresent()) {
+            QuestionBoard questionBoard = optionalQuestionBoard.get();
+            QuestionCommend questionCommend = QuestionCommend.builder()
+                    .commendContent(qnACommendDto.getCommendContent())
+                    .questionBoard(questionBoard)
+                    .build();
+            questionCommendRepository.save(questionCommend);
+            questionBoard.addCommendList(questionCommend);
+        }else{
+            throw new QnABoardNotFindException(ExceptionList.QNABOARD_NOT_FIND_ONE);
+        }
 
+    }
+
+    @Override
+    @Transactional
+    public void deleteCommend(Long commendIndex) {
+        Optional<QuestionCommend> optionalQuestionCommend = questionCommendRepository.findById(commendIndex);
+        if (optionalQuestionCommend.isPresent()) {
+            QuestionCommend questionCommend = optionalQuestionCommend.get();
+            QuestionBoard questionBoard = questionCommend.getQuestionBoard();
+            questionCommendRepository.deleteById(commendIndex);
+            questionBoard.removeCommendList(questionCommend);
+        } else {
+            throw new QnABoardNotFindException(ExceptionList.QnACOMMEND_NOT_EXISTENT);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void updateCommend(Long commendIndex, QnACommendDto qnACommendDto) {
+        Optional<QuestionCommend> optionalQuestionCommend = questionCommendRepository.findById(commendIndex);
+        if (optionalQuestionCommend.isPresent()) {
+            QuestionCommend questionCommend = optionalQuestionCommend.get();
+            questionCommend.commendUpdate(qnACommendDto.getCommendContent());
+            QuestionBoard questionBoard = questionCommend.getQuestionBoard();
+            questionCommendRepository.save(questionCommend);
+            questionBoard.addCommendList(questionCommend);
+        }else{
+            throw new FaqBoardNotFindException(ExceptionList.QnACOMMEND_NOT_EXISTENT);
+        }
+    }
+
+    @Override
+    @Transactional
+    public List<QuestionCommend> getCommendList(Long questionIndex) {
+        Optional<QuestionBoard> optionalQuestionBoard = questionBoardRepository.findById(questionIndex);
+        if (optionalQuestionBoard.isPresent()) {
+            QuestionBoard questionBoard = optionalQuestionBoard.get();
+            return questionBoard.getCommendList();
+        } else {
+            throw new QnABoardNotFindException(ExceptionList.QNABOARD_NOT_FIND_ONE);
+        }
+    }
 }

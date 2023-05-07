@@ -20,9 +20,8 @@ public enum ExceptionList {
     QNABOARD_NOT_EXISTENT_ALL(-6001, "문의 게시판의 전체 조회 목록이 없습니다."),
     QNABOARD_NOT_EXISTENT_DELETE(-6002, "삭제 요청 중 존재 하지 않는 Q&A 목록을 불러왔습니다."),
     QNABOARD_NOT_EXISTENT_UPDATE(-6003, "업데이트 요청 중 존재 하지 않는 FAQ 목록을 불러왔습니다."),
-    QNABOARD_NOT_FIND_ONE(-6004, "찾을 수 없는 문의게시글 입니다.")
-
-    ;
+    QNABOARD_NOT_FIND_ONE(-6004, "찾을 수 없는 문의게시글 입니다."),
+    QnACOMMEND_NOT_EXISTENT(-7001, "이미 존재하지 않은 답변입니다.");
     private final int code;
     private final String message;
 }
