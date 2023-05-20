@@ -1,16 +1,16 @@
 package com.mju.board.presentation.controller;
 
 import com.mju.board.application.QuestionBoardService;
+import com.mju.board.domain.model.FAQBoard;
 import com.mju.board.domain.model.QuestionBoard;
 import com.mju.board.domain.model.QuestionCommend;
 import com.mju.board.domain.model.Result.CommonResult;
 import com.mju.board.domain.service.ResponseService;
-import com.mju.board.presentation.dto.qnadto.QnACommendDto;
-import com.mju.board.presentation.dto.qnadto.QnAComplaintDto;
-import com.mju.board.presentation.dto.qnadto.QnARegisterDto;
-import com.mju.board.presentation.dto.qnadto.QnAupdateDto;
+import com.mju.board.presentation.dto.faqdto.FAQSearchDto;
+import com.mju.board.presentation.dto.qnadto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,6 +30,8 @@ public class QuestionBoardController {
     //[관리자,강사진,수강생]Q&A 등록
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public CommonResult registerQnA(@RequestPart(value = "image", required = false) List<MultipartFile> images, @RequestPart(value = "qnARegisterDto") QnARegisterDto qnARegisterDto) {
+        String userIndex = "test1234";
+
         questionBoardService.registerQnA(qnARegisterDto, images);
         return responseService.getSuccessfulResult();
     }
@@ -71,14 +73,22 @@ public class QuestionBoardController {
         return responseService.getSuccessfulResult();
     }
 
-    //[수강생]해당 문의 Q&A신고
-    @PostMapping(value = "qna/complaint/{questionIndex}")
-    public CommonResult complaintQnA(@PathVariable Long questionIndex, @RequestBody QnAComplaintDto qnAComplaintDto/*, @RequestHeader("Authorization") String token*/) {
-//        Long complainerIndex = authService.getUserIdFromToken(token);//AuthService는 사용자 인증을 처리하는 서비스로 나중에 이걸로 사용자 인증 필요
-//        qnAComplaintDto.setComplainerIndex(complainerIndex);
-        questionBoardService.complaintQnA(questionIndex, qnAComplaintDto);
-        return responseService.getSuccessfulResult();
+    //[관리자,강사진,수강생]제목, 내용으로 검색
+    @PostMapping("/search")
+    public CommonResult searchQnA(@RequestBody QnASearchDto qnASearchDto) {
+        List<QuestionBoard> searchQuestionList = questionBoardService.searchQnA(qnASearchDto);
+        CommonResult commonResult = responseService.getListResult(searchQuestionList);
+        return commonResult;
     }
+
+//    //[수강생]해당 문의 Q&A신고
+//    @PostMapping(value = "/complaint/{questionIndex}")
+//    public CommonResult complaintQnA(@PathVariable Long questionIndex, @RequestBody QnAComplaintDto qnAComplaintDto/*, @RequestHeader("Authorization") String token*/) {
+////        Long complainerIndex = authService.getUserIdFromToken(token);//AuthService는 사용자 인증을 처리하는 서비스로 나중에 이걸로 사용자 인증 필요
+////        qnAComplaintDto.setComplainerIndex(complainerIndex);
+//        questionBoardService.complaintQnA(questionIndex, qnAComplaintDto);
+//        return responseService.getSuccessfulResult();
+//    }
 
     //////////////////////////////<문의 답변 게시판>//////////////////////////////
 
@@ -110,14 +120,24 @@ public class QuestionBoardController {
         CommonResult commonResult = responseService.getListResult(commendList);
         return commonResult;
     }
-    //[수강생]답변 신고
-    @PostMapping(value = "qna/commend/complaint/{commendIndex}")
-    public CommonResult complaintCommend(@PathVariable Long commendIndex, @RequestBody QnAComplaintDto qnAComplaintDto/*, @RequestHeader("Authorization") String token*/) {
-//        Long complainerIndex = authService.getUserIdFromToken(token);//AuthService는 사용자 인증을 처리하는 서비스로 나중에 이걸로 사용자 인증 필요
-//        qnAComplaintDto.setComplainerIndex(complainerIndex);
-        questionBoardService.complaintCommend(commendIndex, qnAComplaintDto);
+
+    //[수강생, 강사진, 관리자] 답변 좋아요
+    @GetMapping("commend/goodCheck/{commendIndex}")
+    public CommonResult goodCheckCommend(@PathVariable Long commendIndex) {
+        questionBoardService.goodCheckCommend(commendIndex);
         return responseService.getSuccessfulResult();
     }
+
+
+
+//    //[수강생]답변 신고
+//    @PostMapping(value = "qna/commend/complaint/{commendIndex}")
+//    public CommonResult complaintCommend(@PathVariable Long commendIndex, @RequestBody QnAComplaintDto qnAComplaintDto/*, @RequestHeader("Authorization") String token*/) {
+////        Long complainerIndex = authService.getUserIdFromToken(token);//AuthService는 사용자 인증을 처리하는 서비스로 나중에 이걸로 사용자 인증 필요
+////        qnAComplaintDto.setComplainerIndex(complainerIndex);
+//        questionBoardService.complaintCommend(commendIndex, qnAComplaintDto);
+//        return responseService.getSuccessfulResult();
+//    }
 
 
 }

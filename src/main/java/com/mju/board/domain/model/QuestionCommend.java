@@ -19,7 +19,7 @@ public class QuestionCommend {
         this.questionBoard = questionBoard;
     }
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "commend_index")
     private Long commendIndex;
 
@@ -37,6 +37,8 @@ public class QuestionCommend {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "good_count")
+    private int goodCount;
 
 //    @Enumerated(EnumType.STRING)
 //    @Column(name = "Answer_state")
@@ -55,5 +57,9 @@ public class QuestionCommend {
 
     public void initialization(QuestionBoard questionBoard) {
         this.questionBoard = questionBoard;
+    }
+
+    public void incrementGood() {
+        goodCount++;
     }
 }

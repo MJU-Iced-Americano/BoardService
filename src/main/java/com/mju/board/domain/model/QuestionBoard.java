@@ -17,6 +17,8 @@ import java.util.List;
 public class QuestionBoard{
 
 
+
+
     public enum QuestionType {
         GENERAL, LECTURE, PAYMENT;
     }
@@ -34,12 +36,12 @@ public class QuestionBoard{
         this.questionImageList = originalBoard.getQuestionImageList();
         this.createdAt = originalBoard.createdAt;
         this.updatedAt = originalBoard.getUpdatedAt();
-        this.likes = originalBoard.getLikes();
+        this.goodCount = originalBoard.getGoodCount();
         this.type = originalBoard.getType();
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "question_index")
     private Long questionIndex;
     @Column(name = "question_title")
@@ -69,8 +71,10 @@ public class QuestionBoard{
     @Column(name = "question_type")
     private QuestionBoard.QuestionType type;
 
-    @Column(name = "likes")
-    private int likes;
+    @Column(name = "good_count")
+    private int goodCount;
+
+
 
 //    @Enumerated(EnumType.STRING)
 //    @Column(name = "Answer _state")
@@ -105,8 +109,8 @@ public class QuestionBoard{
         this.questionImageList.remove(questionImage);
         questionImage.initialization();
     }
-    public void incrementLikes() {
-        likes++;
+    public void incrementGood() {
+        goodCount++;
     }
     public void clearQuestionCommendList() {
         this.questionCommendList.clear();

@@ -32,6 +32,7 @@ public class ExceptionService {
         return responseService.getFailResult(exceptionList.getCode(), exceptionList.getMessage());
     }
 
+
     @ExceptionHandler({QnABoardNotFindException.class})
     protected CommonResult handleCustom(QnABoardNotFindException e) {
         log.error("non exception Q&ABoard", e);

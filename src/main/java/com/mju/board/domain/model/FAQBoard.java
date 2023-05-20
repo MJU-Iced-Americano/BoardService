@@ -25,7 +25,7 @@ public class FAQBoard {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "faq_index")
     private Long faqIndex;
     @Column(name = "faq_title")

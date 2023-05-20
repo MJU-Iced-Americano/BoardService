@@ -115,7 +115,7 @@ public class FAQBoardServiceImpl implements FAQBoardService {
         if (!searchFAQBoardList.isEmpty()) {
             return searchFAQBoardList;
         }else{
-            throw new FaqBoardNotFindException(ExceptionList.FAQBOARD_NOT_EXISTENT_KEYWORD);
+            throw new FaqBoardNotFindException(ExceptionList.BOARD_NOT_EXISTENT_KEYWORD);
         }
     }
 

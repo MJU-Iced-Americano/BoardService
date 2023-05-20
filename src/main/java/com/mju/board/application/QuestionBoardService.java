@@ -2,10 +2,7 @@ package com.mju.board.application;
 
 import com.mju.board.domain.model.QuestionBoard;
 import com.mju.board.domain.model.QuestionCommend;
-import com.mju.board.presentation.dto.qnadto.QnACommendDto;
-import com.mju.board.presentation.dto.qnadto.QnAComplaintDto;
-import com.mju.board.presentation.dto.qnadto.QnARegisterDto;
-import com.mju.board.presentation.dto.qnadto.QnAupdateDto;
+import com.mju.board.presentation.dto.qnadto.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -23,7 +20,7 @@ public interface QuestionBoardService {
 
     public void goodCheck(Long questionIndex);
 
-    public void complaintQnA(Long questionIndex, QnAComplaintDto qnAComplaintDto);
+//    public void complaintQnA(Long questionIndex, QnAComplaintDto qnAComplaintDto);
 
     public void registerCommend(Long questionIndex, QnACommendDto qnACommendDto);
 
@@ -33,5 +30,9 @@ public interface QuestionBoardService {
 
     public List<QuestionCommend> getCommendList(Long questionIndex);
 
-    public void complaintCommend(Long commendIndex, QnAComplaintDto qnAComplaintDto);
+//    public void complaintCommend(Long commendIndex, QnAComplaintDto qnAComplaintDto);
+
+    public List<QuestionBoard> searchQnA(QnASearchDto qnASearchDto);
+
+    public void goodCheckCommend(Long commendIndex);
 }

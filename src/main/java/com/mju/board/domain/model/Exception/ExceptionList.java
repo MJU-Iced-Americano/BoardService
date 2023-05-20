@@ -13,7 +13,7 @@ public enum ExceptionList {
     FAQBOARD_NOT_FINDTYPE_GENERAL_MEMBER(-5002, "일반회원FAQ 목록이 없습니다."),
     FAQBOARD_NOT_FINDTYPE_EDUCATION(-5003, "교육FAQ 목록이 없습니다."),
     FAQBOARD_NOT_EXISTENT(-5006, "존재 하지 않는 FAQ 목록을 불러왔습니다"),
-    FAQBOARD_NOT_EXISTENT_KEYWORD(-5008, "해당 검색 내역이 존재하지 않습니다."),
+    BOARD_NOT_EXISTENT_KEYWORD(-5008, "해당 검색 내역이 존재하지 않습니다."),
    ////////////////////////////////문의 게시판 오류/////////////////////////////////
     QNABOARD_NOT_EXISTENT_ALL(-6001, "문의 게시판의 전체 조회 목록이 없습니다."),
     QNABOARD_NOT_EXISTENT(-6004, "존재 하지 않는 문의게시글을 불러왔습니다."),

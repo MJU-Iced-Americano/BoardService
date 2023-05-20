@@ -8,6 +8,8 @@ import com.mju.board.presentation.dto.faqdto.FAQRegisterDto;
 import com.mju.board.presentation.dto.faqdto.FAQSearchDto;
 import com.mju.board.presentation.dto.faqdto.FAQUpdateDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,7 +32,14 @@ public class FAQBoardController {
     //////////////////////////<FAQ게시판>/////////////////////////////
     //[관리자]FAQ 등록
     @PostMapping("/register")
-    public CommonResult registerFaq(@RequestBody FAQRegisterDto faqRegisterDto) {
+    public CommonResult registerFaq(@RequestBody FAQRegisterDto faqRegisterDto, Authentication authentication) {
+//        Object principal = authentication.getPrincipal();
+        String userIndex = "test1234";
+//        if (principal instanceof UserDetails) {//UserDetails 인터페이스를 구현한 경우
+//            userIndex = ((UserDetails) principal).getUsername();
+//        } else {
+//            userIndex = principal.toString(); // 구현되지 않은 경우에는 toString()
+//        }
         faqBoardService.registerFaq(faqRegisterDto);
         return responseService.getSuccessfulResult();
     }

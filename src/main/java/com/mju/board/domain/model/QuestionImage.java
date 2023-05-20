@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "questionimage")
 public class QuestionImage {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long imageIndex;
 
     @Column(name = "image_url")

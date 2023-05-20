@@ -25,7 +25,7 @@ public class QuestionComplaint {
         this.questionCommend = questionCommend;
     }
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long complaintIndex;
 
     @Column(name = "complaint_content")
