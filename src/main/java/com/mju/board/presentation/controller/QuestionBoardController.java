@@ -30,8 +30,6 @@ public class QuestionBoardController {
     //[관리자,강사진,수강생]Q&A 등록
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public CommonResult registerQnA(@RequestPart(value = "image", required = false) List<MultipartFile> images, @RequestPart(value = "qnARegisterDto") QnARegisterDto qnARegisterDto) {
-        String userIndex = "test1234";
-
         questionBoardService.registerQnA(qnARegisterDto, images);
         return responseService.getSuccessfulResult();
     }
@@ -81,14 +79,6 @@ public class QuestionBoardController {
         return commonResult;
     }
 
-//    //[수강생]해당 문의 Q&A신고
-//    @PostMapping(value = "/complaint/{questionIndex}")
-//    public CommonResult complaintQnA(@PathVariable Long questionIndex, @RequestBody QnAComplaintDto qnAComplaintDto/*, @RequestHeader("Authorization") String token*/) {
-////        Long complainerIndex = authService.getUserIdFromToken(token);//AuthService는 사용자 인증을 처리하는 서비스로 나중에 이걸로 사용자 인증 필요
-////        qnAComplaintDto.setComplainerIndex(complainerIndex);
-//        questionBoardService.complaintQnA(questionIndex, qnAComplaintDto);
-//        return responseService.getSuccessfulResult();
-//    }
 
     //////////////////////////////<문의 답변 게시판>//////////////////////////////
 
@@ -127,17 +117,6 @@ public class QuestionBoardController {
         questionBoardService.goodCheckCommend(commendIndex);
         return responseService.getSuccessfulResult();
     }
-
-
-
-//    //[수강생]답변 신고
-//    @PostMapping(value = "qna/commend/complaint/{commendIndex}")
-//    public CommonResult complaintCommend(@PathVariable Long commendIndex, @RequestBody QnAComplaintDto qnAComplaintDto/*, @RequestHeader("Authorization") String token*/) {
-////        Long complainerIndex = authService.getUserIdFromToken(token);//AuthService는 사용자 인증을 처리하는 서비스로 나중에 이걸로 사용자 인증 필요
-////        qnAComplaintDto.setComplainerIndex(complainerIndex);
-//        questionBoardService.complaintCommend(commendIndex, qnAComplaintDto);
-//        return responseService.getSuccessfulResult();
-//    }
 
 
 }

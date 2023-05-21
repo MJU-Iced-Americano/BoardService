@@ -17,7 +17,10 @@ public enum ExceptionList {
    ////////////////////////////////문의 게시판 오류/////////////////////////////////
     QNABOARD_NOT_EXISTENT_ALL(-6001, "문의 게시판의 전체 조회 목록이 없습니다."),
     QNABOARD_NOT_EXISTENT(-6004, "존재 하지 않는 문의게시글을 불러왔습니다."),
-    QNACOMMEND_NOT_EXISTENT(-7001, "존재하지 않은 답변입니다.")
+    QNACOMMEND_NOT_EXISTENT(-7001, "존재하지 않은 답변입니다."),
+    ////////////////////////////////베너 오류/////////////////////////////////
+    NON_EXCEPTION_BANNER(-8888, "배너 이미지가 등록되지 않았습니다."),
+    NOT_FIND_BANNER(-8888, "등록된 배너 이미지를 찾을 수 없습니다.")
     ;
     private final int code;
     private final String message;

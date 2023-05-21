@@ -43,4 +43,7 @@ cloud:
     region:
       static: ap-northeast-2
     s3:
-      bucket: iceamericano-board
+      bucket:
+      - iceamericano-board
+      - iceamericano-banner
+

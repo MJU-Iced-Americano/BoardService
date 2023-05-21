@@ -7,7 +7,6 @@ import com.mju.board.domain.model.Exception.FaqBoardNotFindException;
 import com.mju.board.domain.model.Exception.QnABoardNotFindException;
 import com.mju.board.domain.repository.QuestionBoardRepository;
 import com.mju.board.domain.repository.QuestionCommendRepository;
-import com.mju.board.domain.repository.QuestionComplaintRepository;
 import com.mju.board.domain.service.S3Service;
 import com.mju.board.presentation.dto.qnadto.*;
 import jakarta.transaction.Transactional;
@@ -26,7 +25,6 @@ public class QuestionBoardServiceImpl implements QuestionBoardService{
 
     private final S3Service s3Service;
     private final QuestionBoardRepository questionBoardRepository;
-    private final QuestionComplaintRepository questionComplaintRepository;
     private final QuestionCommendRepository questionCommendRepository;
 
     @Override
@@ -40,7 +38,7 @@ public class QuestionBoardServiceImpl implements QuestionBoardService{
 
         if (!images.isEmpty()) {
             for (MultipartFile image : images) {
-                String imageUrl = s3Service.uploadImageToS3(image);
+                String imageUrl = s3Service.uploadImageToS3Board(image);
                 questionBoard.addImage(imageUrl);
             }
         }
@@ -74,7 +72,7 @@ public class QuestionBoardServiceImpl implements QuestionBoardService{
                 for (QuestionImage questionImage : questionImages) {
                     String imageUrl = questionImage.getImageUrl();
                     if (imageUrl != null) {
-                        s3Service.deleteImageFromS3(imageUrl);
+                        s3Service.deleteImageFromS3Board(imageUrl);
                     }
                 }
             }
@@ -99,14 +97,14 @@ public class QuestionBoardServiceImpl implements QuestionBoardService{
                 for (QuestionImage questionImage : imagesToDelete) {
                     String imageUrl = questionImage.getImageUrl();
                     if (imageUrl != null) {
-                        s3Service.deleteImageFromS3(imageUrl);
+                        s3Service.deleteImageFromS3Board(imageUrl);
                     }
                     questionBoard.removeImage(questionImage);
                 }
                 // 새 이미지 추가 , Url 새로 추가
                 List<String> newImageUrls = new ArrayList<>();
                 for (MultipartFile image : images) {
-                    String imageUrl = s3Service.uploadImageToS3(image);
+                    String imageUrl = s3Service.uploadImageToS3Board(image);
                     newImageUrls.add(imageUrl);
                 }
                 questionBoard.updateImages(newImageUrls);//추상화를 위해
@@ -156,25 +154,6 @@ public class QuestionBoardServiceImpl implements QuestionBoardService{
         }
     }
 
-
-
-    //    @Override
-//    @Transactional
-//    public void complaintQnA(Long questionIndex, QnAComplaintDto qnAComplaintDto) {
-//        Optional<QuestionBoard> optionalQuestionBoard = questionBoardRepository.findById(questionIndex);
-//        if (optionalQuestionBoard.isPresent()) {
-//            QuestionBoard questionBoard = optionalQuestionBoard.get();
-//
-//            QuestionComplaint questionComplaint = QuestionComplaint.builder()
-//                    .complaintContent(qnAComplaintDto.getComplaintContent())
-//                    .type(qnAComplaintDto.getType())
-//                    .questionBoard(questionBoard)
-//                    .build();
-//            questionComplaintRepository.save(questionComplaint);
-//        }else{
-//            throw new QnABoardNotFindException(ExceptionList.QNABOARD_NOT_EXISTENT);
-//        }
-//    }
     //////////////////////////////<문의답변게시판>//////////////////////////////
     @Override
     @Transactional
@@ -264,24 +243,6 @@ public class QuestionBoardServiceImpl implements QuestionBoardService{
         }
     }
 
-//    @Override
-//    @Transactional
-//    public void complaintCommend(Long commendIndex, QnAComplaintDto qnAComplaintDto) {
-//        Optional<QuestionCommend> optionalQuestionCommend = questionCommendRepository.findById(commendIndex);
-//        if (optionalQuestionCommend.isPresent()) {
-//            QuestionCommend questionCommend = optionalQuestionCommend.get();
-//            QuestionBoard questionBoard = questionCommend.getQuestionBoard();
-//            QuestionComplaint questionComplaint = QuestionComplaint.builder()
-//                    .complaintContent(qnAComplaintDto.getComplaintContent())
-//                    .type(qnAComplaintDto.getType())
-//                    .questionBoard(questionBoard)
-//                    .questionCommend(questionCommend)
-//                    .build();
-//            questionComplaintRepository.save(questionComplaint);
-//        }else{
-//            throw new CommentNotFindException(ExceptionList.QNACOMMEND_NOT_EXISTENT);
-//        }
-//    }
 
 
 }
