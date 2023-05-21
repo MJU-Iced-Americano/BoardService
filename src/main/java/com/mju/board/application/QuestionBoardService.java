@@ -3,6 +3,7 @@ package com.mju.board.application;
 import com.mju.board.domain.model.QuestionBoard;
 import com.mju.board.domain.model.QuestionCommend;
 import com.mju.board.presentation.dto.qnadto.*;
+import jakarta.transaction.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -35,4 +36,7 @@ public interface QuestionBoardService {
     public List<QuestionBoard> searchQnA(QnASearchDto qnASearchDto);
 
     public void goodCheckCommend(Long commendIndex);
+
+    public QuestionCommend getQnACommendOne(Long commendIndex);
+
 }

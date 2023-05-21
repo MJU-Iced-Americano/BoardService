@@ -248,6 +248,22 @@ public class QuestionBoardServiceImpl implements QuestionBoardService{
         }
     }
 
+    @Override
+    @Transactional
+    public QuestionCommend getQnACommendOne(Long commendIndex) {
+        Optional<QuestionCommend> optionalQuestionCommend = questionCommendRepository.findById(commendIndex);
+        if (optionalQuestionCommend.isPresent()) {
+            QuestionCommend questionCommend = optionalQuestionCommend.get();
+            QuestionBoard questionBoard = questionCommend.getQuestionBoard();
+            Long questionIndex = questionBoard.getQuestionIndex();
+            questionCommend.initQuestionIndex(questionIndex);
+
+            return questionCommend;
+        }else{
+            throw new CommentNotFindException(ExceptionList.QNACOMMEND_NOT_EXISTENT);
+        }
+    }
+
 //    @Override
 //    @Transactional
 //    public void complaintCommend(Long commendIndex, QnAComplaintDto qnAComplaintDto) {

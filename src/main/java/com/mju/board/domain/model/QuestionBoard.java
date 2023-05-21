@@ -18,7 +18,6 @@ public class QuestionBoard{
 
 
 
-
     public enum QuestionType {
         GENERAL, LECTURE, PAYMENT;
     }
@@ -50,9 +49,9 @@ public class QuestionBoard{
     @OneToMany(mappedBy = "questionBoard", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuestionImage> questionImageList = new ArrayList<>();
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "questionBoard", cascade = CascadeType.ALL)
-    private List<QuestionComplaint> questionComplaintList = new ArrayList<>(); //아직은 신고 테이블에서만 처리해서 사용을 안함.
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "questionBoard", cascade = CascadeType.ALL)
+//    private List<QuestionComplaint> questionComplaintList = new ArrayList<>(); //아직은 신고 테이블에서만 처리해서 사용을 안함.
 
     @JsonIgnore
     @OneToMany(mappedBy = "questionBoard", cascade = CascadeType.ALL)
@@ -111,9 +110,6 @@ public class QuestionBoard{
     }
     public void incrementGood() {
         goodCount++;
-    }
-    public void clearQuestionCommendList() {
-        this.questionCommendList.clear();
     }
     public List<QuestionCommend> getCommendList() {
         return this.questionCommendList;

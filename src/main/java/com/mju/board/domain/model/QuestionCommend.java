@@ -40,6 +40,8 @@ public class QuestionCommend {
     @Column(name = "good_count")
     private int goodCount;
 
+    @Transient
+    private Long questionIndex;
 //    @Enumerated(EnumType.STRING)
 //    @Column(name = "Answer_state")
 //    private AnswerState answerState;
@@ -61,5 +63,9 @@ public class QuestionCommend {
 
     public void incrementGood() {
         goodCount++;
+    }
+
+    public void initQuestionIndex(Long questionIndex) {
+        this.questionIndex = questionIndex;
     }
 }
