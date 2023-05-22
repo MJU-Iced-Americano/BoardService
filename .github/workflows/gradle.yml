@@ -68,9 +68,9 @@ jobs:
         username: ubuntu
         key: ${{ secrets.EC2_KEY }}        
         script: |
-          docker stop $(docker ps -a -q) 
-          docker rm $(docker ps -a -q) 
-          docker pull devlee9910/softcoa-board-service
-          docker run -d -p 8080:8080 --name boardService devlee9910/softcoa-board-service
+          sudo docker stop $(docker ps -a -q) 
+          sudo docker rm $(docker ps -a -q) 
+          sudo docker pull devlee9910/softcoa-board-service
+          sudo docker run -d -p 8080:8080 --name boardService devlee9910/softcoa-board-service
           
           
