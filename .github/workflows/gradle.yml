@@ -66,11 +66,11 @@ jobs:
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ubuntu
-        key: ${{ secrets.EC2_KEY }}
+        key: ${{ secrets.EC2_KEY }}        
         script: |
-          docker rm -f $(docker ps -qa)
-          docker rmi devlee9910/softcoa-board-service
+          docker stop $(docker ps -a -q) 
+          docker rm $(docker ps -a -q) 
           docker pull devlee9910/softcoa-board-service
-          docker-compose up -d
+          docker run -d -p 8080:8080 --name boardService devlee9910/softcoa-board-service
           
           
