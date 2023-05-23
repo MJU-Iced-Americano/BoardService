@@ -59,9 +59,5 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 jar {
-	manifest {
-		attributes(
-				'Main-Class': 'com.com.mju.board.BoardApplication'
-		)
-	}
+	enabled = false
 }
