@@ -59,5 +59,9 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 jar {
-	enabled = false
+	manifest {
+		attributes(
+				'Main-Class': 'com.mypackage.MyClass'
+		)
+	}
 }
