@@ -51,9 +51,9 @@ dependencyManagement {
 }
 tasks {
 	// 기존 태스크 내용 유지
-	bootJar {
-		enabled = false
-	}
+//	bootJar {
+//		enabled = false
+//	}
 }
 tasks.named('test') {
 	useJUnitPlatform()
