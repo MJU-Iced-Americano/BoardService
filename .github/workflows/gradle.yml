@@ -28,6 +28,15 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
 
+      # Github Repository Secrets를 통해 환경 변수 파일을 생성합니다.
+    - name: access to secrets
+      run: |
+          echo "S3_ACCESS_KEY=$S3_ACCESS_KEY" >> .env.production
+          echo "S3_SECRET_KEY=$S3_SECRET_KEY" >> .env.production
+      env:
+          S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
+          S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
+          
     # Spring Boot 어플리케이션 Build (1)
     - name: Spring Boot Build
       run: |
@@ -49,19 +58,19 @@ jobs:
     - name: Docker Hub push
       run: |
         docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-        docker push devlee9910/softcoa-board-service
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/softcoa-board-service
         
-#     # 서버에서 Docker 이미지 실행
-#     - name: EC2 Docker Run
-#       uses: appleboy/ssh-action@master
-#       with:
-#         host: ${{ secrets.EC2_HOST }}
-#         username: ubuntu
-#         key: ${{ secrets.EC2_KEY }}
-#         script: |
-#           docker rm -f $(docker ps -qa)
-#           docker rmi devlee9910/softcoa-board-service
-#           docker pull devlee9910/softcoa-board-service
-#           docker-compose up -d
+    # 서버에서 Docker 이미지 실행
+    - name: EC2 Docker Run
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ubuntu
+        key: ${{ secrets.EC2_KEY }}        
+        script: |
+          sudo docker stop $(docker ps -a -q) 
+          sudo docker rm $(docker ps -a -q) 
+          sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/softcoa-board-service
+          sudo docker run -d -p 8080:8080 --name boardService ${{ secrets.DOCKERHUB_USERNAME }}/softcoa-board-service
           
           
