@@ -58,6 +58,12 @@ tasks {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
 jar {
-	enabled = false
+	manifest {
+		attributes(
+				'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
+				'Main-Class': 'com.mju.board.BoardApplication'
+		)
+	}
 }
