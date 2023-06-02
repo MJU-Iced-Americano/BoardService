@@ -44,7 +44,7 @@ public class UserService {
             return null;
         }
 
-        HttpCookie token = new HttpCookie("SOCOA-SSO-TOKEN", ssoToken);
+        HttpCookie token = new HttpCookie("ssoToken", ssoToken);
         String userId = getUserInfoDto(token).getId();
         System.out.println(userId);
         return userId;
