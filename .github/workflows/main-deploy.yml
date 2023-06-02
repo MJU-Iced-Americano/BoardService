@@ -32,12 +32,9 @@ jobs:
         # 1. Github Repository Secrets를 통해 환경 변수 파일을 생성
       - name: access to secrets
         run: |
-            echo "S3_ACCESS_KEY=$S3_ACCESS_KEY" >> .env.production
-            echo "S3_SECRET_KEY=$S3_SECRET_KEY" >> .env.production
-        env:
-            S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
-            S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
-    
+            echo "S3_ACCESS_KEY=${{ secrets.S3_ACCESS_KEY }}" >> .env
+            echo "S3_SECRET_KEY=${{ secrets.S3_SECRET_KEY }}" >> .env
+            
       - name: Spring Boot Build
         run: |
            chmod +x ./gradlew
