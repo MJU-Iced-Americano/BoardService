@@ -16,16 +16,15 @@ import java.util.List;
 @Table(name = "questionboard")
 public class QuestionBoard{
 
-
-
     public enum QuestionType {
         GENERAL, LECTURE, PAYMENT;
     }
     @Builder
-    public QuestionBoard(String questionTitle, String questionContent, QuestionType type){
+    public QuestionBoard(String questionTitle, String questionContent, QuestionType type, String userId){
         this.questionTitle= questionTitle;
         this.questionContent = questionContent;
         this.type = type;
+        this.userId = userId;
     }
     public QuestionBoard(QuestionBoard originalBoard) {
         // 복사 생성자 //답변리스트 제외
@@ -37,6 +36,7 @@ public class QuestionBoard{
         this.updatedAt = originalBoard.getUpdatedAt();
         this.goodCount = originalBoard.getGoodCount();
         this.type = originalBoard.getType();
+        this.userId = originalBoard.getUserId();
     }
 
     @Id
@@ -48,10 +48,6 @@ public class QuestionBoard{
 
     @OneToMany(mappedBy = "questionBoard", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuestionImage> questionImageList = new ArrayList<>();
-
-//    @JsonIgnore
-//    @OneToMany(mappedBy = "questionBoard", cascade = CascadeType.ALL)
-//    private List<QuestionComplaint> questionComplaintList = new ArrayList<>(); //아직은 신고 테이블에서만 처리해서 사용을 안함.
 
     @JsonIgnore
     @OneToMany(mappedBy = "questionBoard", cascade = CascadeType.ALL)
@@ -73,17 +69,28 @@ public class QuestionBoard{
     @Column(name = "good_count")
     private int goodCount;
 
-
-
-//    @Enumerated(EnumType.STRING)
-//    @Column(name = "Answer _state")
-//    private AnswerState answerState;
-
+    @Column(name = "user_writer_id")
+    private String userId;
+    @Transient
+    private String userName;
+    public void addUserName(String userName) {
+        this.userName = userName;
+    }
 
     @PrePersist // 데이터 생성이 이루어질때 사전 작업
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = this.createdAt;
+    }
+
+    @ElementCollection
+    private List<String> likedUserIds = new ArrayList<>();
+    public List<String> getLikedUserIds() {
+        return likedUserIds;
+    }
+
+    public void addLikedUserId(String userId) {
+        likedUserIds.add(userId);
     }
 
     public void questionUpdate(String questionTitle, String questionContent, QuestionType type) {

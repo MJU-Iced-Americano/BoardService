@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 8080
 
 spring:
   application:
@@ -26,7 +26,7 @@ spring:
 
 eureka:
   instance:    
-    prefer-ip-address: true
+#    prefer-ip-address: true
     ip-address: 3.34.240.33
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
   client:
@@ -34,6 +34,7 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://13.124.61.210:8761/eureka
+#      defaultZone: http://localhost:8761/eureka
 
 management:
   endpoint:

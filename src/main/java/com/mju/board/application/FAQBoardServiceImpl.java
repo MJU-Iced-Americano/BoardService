@@ -22,10 +22,9 @@ public class FAQBoardServiceImpl implements FAQBoardService {
     //////////////////////////<FAQ게시판>/////////////////////////////
     private final FAQBoardRepository faqBoardRepository;
 
-
     @Override
     @Transactional
-    public void registerFaq(FAQRegisterDto faqRegisterDto) {
+    public void registerFaq(FAQRegisterDto faqRegisterDto){
         FAQBoard faqBoard = FAQBoard.builder()
                 .faqTitle(faqRegisterDto.getFaqTitle())
                 .faqContent(faqRegisterDto.getFaqContent())

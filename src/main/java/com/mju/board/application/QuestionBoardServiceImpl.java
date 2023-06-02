@@ -1,10 +1,7 @@
 package com.mju.board.application;
 
 import com.mju.board.domain.model.*;
-import com.mju.board.domain.model.Exception.CommentNotFindException;
-import com.mju.board.domain.model.Exception.ExceptionList;
-import com.mju.board.domain.model.Exception.FaqBoardNotFindException;
-import com.mju.board.domain.model.Exception.QnABoardNotFindException;
+import com.mju.board.domain.model.Exception.*;
 import com.mju.board.domain.repository.QuestionBoardRepository;
 import com.mju.board.domain.repository.QuestionCommendRepository;
 import com.mju.board.domain.service.S3Service;
@@ -17,6 +14,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static com.mju.board.domain.model.Exception.ExceptionList.ALREADY_LIKED_USER;
+
 @Service
 @RequiredArgsConstructor
 public class QuestionBoardServiceImpl implements QuestionBoardService{
@@ -26,14 +26,14 @@ public class QuestionBoardServiceImpl implements QuestionBoardService{
     private final S3Service s3Service;
     private final QuestionBoardRepository questionBoardRepository;
     private final QuestionCommendRepository questionCommendRepository;
-
     @Override
     @Transactional
-    public void registerQnA(QnARegisterDto qnARegisterDto, List<MultipartFile> images) {
+    public void registerQnA(String userId, QnARegisterDto qnARegisterDto, List<MultipartFile> images) {
         QuestionBoard questionBoard = QuestionBoard.builder()
                 .questionTitle(qnARegisterDto.getQuestionTitle())
                 .questionContent(qnARegisterDto.getQuestionContent())
                 .type(qnARegisterDto.getType())
+                .userId(userId)
                 .build();
 
         if (!images.isEmpty()) {
@@ -118,7 +118,7 @@ public class QuestionBoardServiceImpl implements QuestionBoardService{
 
     @Override
     @Transactional
-    public QuestionBoard getQnABoardOne(long questionIndex) {
+    public QuestionBoard getQnABoardOne(Long questionIndex) {
         Optional<QuestionBoard> questionBoard = questionBoardRepository.findById(questionIndex);
         if (questionBoard.isPresent()) {
             QuestionBoard questionBoardOne = questionBoard.get();
@@ -131,16 +131,32 @@ public class QuestionBoardServiceImpl implements QuestionBoardService{
 
     @Override
     @Transactional
-    public void goodCheck(Long questionIndex) {
+    public boolean checkIfAlreadyLikedQnA(Long questionIndex, String userId) {
         Optional<QuestionBoard> optionalQuestionBoard = questionBoardRepository.findById(questionIndex);
         if (optionalQuestionBoard.isPresent()) {
             QuestionBoard questionBoard = optionalQuestionBoard.get();
+            List<String> likedUserIds = questionBoard.getLikedUserIds();
+            return likedUserIds.contains(userId);
+        }else {
+            throw new QnABoardNotFindException(ExceptionList.QNABOARD_NOT_EXISTENT);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void goodCheck(Long questionIndex, String userId) {
+        Optional<QuestionBoard> optionalQuestionBoard = questionBoardRepository.findById(questionIndex);
+        if (optionalQuestionBoard.isPresent()) {
+            QuestionBoard questionBoard = optionalQuestionBoard.get();
+            if (checkIfAlreadyLikedQnA(questionIndex, userId)) {
+                throw new AlreadyLikedException(ALREADY_LIKED_USER);
+            }
+            questionBoard.addLikedUserId(userId);
             questionBoard.incrementGood();
             questionBoardRepository.save(questionBoard);
         }else {
             throw new QnABoardNotFindException(ExceptionList.QNABOARD_NOT_EXISTENT);
         }
-
     }
 
     @Override
@@ -154,16 +170,18 @@ public class QuestionBoardServiceImpl implements QuestionBoardService{
         }
     }
 
+
     //////////////////////////////<문의답변게시판>//////////////////////////////
     @Override
     @Transactional
-    public void registerCommend(Long questionIndex, QnACommendDto qnACommendDto) {
+    public void registerCommend(String userId, Long questionIndex, QnACommendDto qnACommendDto) {
         Optional<QuestionBoard> optionalQuestionBoard = questionBoardRepository.findById(questionIndex);
         if (optionalQuestionBoard.isPresent()) {
             QuestionBoard questionBoard = optionalQuestionBoard.get();
             QuestionCommend questionCommend = QuestionCommend.builder()
                     .commendContent(qnACommendDto.getCommendContent())
                     .questionBoard(questionBoard)
+                    .userId(userId)
                     .build();
             questionCommendRepository.save(questionCommend);
             questionBoard.addCommendList(questionCommend);
@@ -213,17 +231,35 @@ public class QuestionBoardServiceImpl implements QuestionBoardService{
             throw new QnABoardNotFindException(ExceptionList.QNABOARD_NOT_EXISTENT);
         }
     }
-
     @Override
     @Transactional
-    public void goodCheckCommend(Long commendIndex) {
+    public boolean checkIfAlreadyLikedCommend(Long commendIndex, String userId) {
         Optional<QuestionCommend> optionalQuestionCommend = questionCommendRepository.findById(commendIndex);
         if (optionalQuestionCommend.isPresent()) {
             QuestionCommend questionCommend = optionalQuestionCommend.get();
+            List<String> likedUserIds = questionCommend.getLikedUserIds();
+            return likedUserIds.contains(userId);
+        }else {
+            throw new CommentNotFindException(ExceptionList.QNACOMMEND_NOT_EXISTENT);
+        }
+    }
+
+
+
+    @Override
+    @Transactional
+    public void goodCheckCommend(Long commendIndex, String userId) {
+        Optional<QuestionCommend> optionalQuestionCommend = questionCommendRepository.findById(commendIndex);
+        if (optionalQuestionCommend.isPresent()) {
+            QuestionCommend questionCommend = optionalQuestionCommend.get();
+            if (checkIfAlreadyLikedCommend(commendIndex, userId)) {
+                throw new AlreadyLikedException(ALREADY_LIKED_USER);
+            }
+            questionCommend.addLikedUserId(userId);
             questionCommend.incrementGood();
             questionCommendRepository.save(questionCommend);
         }else {
-            throw new QnABoardNotFindException(ExceptionList.QNABOARD_NOT_EXISTENT);
+            throw new CommentNotFindException(ExceptionList.QNACOMMEND_NOT_EXISTENT);
         }
     }
 
@@ -242,7 +278,29 @@ public class QuestionBoardServiceImpl implements QuestionBoardService{
             throw new CommentNotFindException(ExceptionList.QNACOMMEND_NOT_EXISTENT);
         }
     }
-
-
+    /////////////////////////////마이페이지////////////////////////////
+    @Override
+    @Transactional
+    public List<QuestionBoard> getMyQnAList(String userId) {
+        List<QuestionBoard> questionWithoutCommendList = getQnABoardList();
+        List<QuestionBoard> myQnAList = new ArrayList<>();
+        for(QuestionBoard questionBoard : questionWithoutCommendList){
+            String boardUserId = questionBoard.getUserId();
+            if (userId.equals(boardUserId)) {
+                myQnAList.add(questionBoard);
+            }
+        }
+        return myQnAList;
+    }
+//    private List<QuestionBoard> getMyQnAList(List<QuestionBoard> questionBoardList, String userId) {
+//        for (QuestionBoard questionBoard : questionBoardList) {
+//            String boardUserId = questionBoard.getUserId();
+//            userService.checkUserId(boardUserId);
+//            UserInfoDto userInfoDto = userService.getUserInfoDto(userId);
+//            String userName = userInfoDto.getUsername();
+//            questionBoard.addUserName(userName);
+//        }
+//        return questionBoardList;
+//    }
 
 }

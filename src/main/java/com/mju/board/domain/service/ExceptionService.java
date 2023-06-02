@@ -50,5 +50,11 @@ public class ExceptionService {
         ExceptionList exceptionList = e.getExceptionList();
         return responseService.getFailResult(exceptionList.getCode(), exceptionList.getMessage());
     }
+    @ExceptionHandler({AlreadyLikedException.class})
+    protected CommonResult handleCustom(AlreadyLikedException e) {
+        log.error("Already Liked user", e);
+        ExceptionList exceptionList = e.getExceptionList();
+        return responseService.getFailResult(exceptionList.getCode(), exceptionList.getMessage());
+    }
 
 }

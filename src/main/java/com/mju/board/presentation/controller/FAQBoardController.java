@@ -4,10 +4,13 @@ import com.mju.board.application.FAQBoardService;
 import com.mju.board.domain.model.FAQBoard;
 import com.mju.board.domain.model.Result.CommonResult;
 import com.mju.board.domain.service.ResponseService;
+import com.mju.board.domain.service.UserService;
 import com.mju.board.presentation.dto.faqdto.FAQRegisterDto;
 import com.mju.board.presentation.dto.faqdto.FAQSearchDto;
 import com.mju.board.presentation.dto.faqdto.FAQUpdateDto;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +25,7 @@ public class FAQBoardController {
 
     private final FAQBoardService faqBoardService;
     private final ResponseService responseService;
-
+    private final UserService userService;
     @GetMapping("/ping")
     public String ping() {
         return "paadfong";
@@ -32,14 +35,15 @@ public class FAQBoardController {
     //////////////////////////<FAQ게시판>/////////////////////////////
     //[관리자]FAQ 등록
     @PostMapping("/register")
-    public CommonResult registerFaq(@RequestBody FAQRegisterDto faqRegisterDto, Authentication authentication) {
+    public CommonResult registerFaq(@RequestBody FAQRegisterDto faqRegisterDto, HttpServletRequest request) {
 //        Object principal = authentication.getPrincipal();
-        String userIndex = "test1234";
 //        if (principal instanceof UserDetails) {//UserDetails 인터페이스를 구현한 경우
 //            userIndex = ((UserDetails) principal).getUsername();
 //        } else {
 //            userIndex = principal.toString(); // 구현되지 않은 경우에는 toString()
 //        }
+        String userId = userService.getUserId(request);
+        userService.checkUserType(userId, "MANAGER");
         faqBoardService.registerFaq(faqRegisterDto);
         return responseService.getSuccessfulResult();
     }
@@ -72,7 +76,9 @@ public class FAQBoardController {
 
     //[관리자]선택한것 삭제
     @DeleteMapping("/delete/{faqIndex}")
-    public CommonResult deleteFaq(@PathVariable Long faqIndex) throws Exception {
+    public CommonResult deleteFaq(@PathVariable Long faqIndex, HttpServletRequest request) throws Exception {
+        String userId = userService.getUserId(request);
+        userService.checkUserType(userId, "MANAGER");
         faqBoardService.deleteFaq(faqIndex);
         return responseService.getSuccessfulResult();
     }
@@ -80,7 +86,9 @@ public class FAQBoardController {
 
     //[관리자]FAQ 업데이트
     @PutMapping("/update/{faqIndex}")
-    public CommonResult updateFaq(@PathVariable Long faqIndex, @RequestBody FAQUpdateDto faqUpdateDto) {
+    public CommonResult updateFaq(@PathVariable Long faqIndex, @RequestBody FAQUpdateDto faqUpdateDto, HttpServletRequest request) {
+        String userId = userService.getUserId(request);
+        userService.checkUserType(userId, "MANAGER");
         faqBoardService.updateFaq(faqIndex, faqUpdateDto);
         return responseService.getSuccessfulResult();
     }
