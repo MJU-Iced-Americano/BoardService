@@ -27,8 +27,9 @@ spring:
 eureka:
   instance:    
 #    prefer-ip-address: true
-    ip-address: 3.34.240.33
+#    ip-address: 3.34.240.33
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    hostname: board.socoa.online
   client:
     register-with-eureka: true
     fetch-registry: true
