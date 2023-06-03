@@ -30,24 +30,20 @@ public class UserService {
      * @param request
      * */
     public String getUserId(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        String ssoToken = null;
-        if(cookies != null && cookies.length != 0){
-            for(Cookie cookie : cookies){
-                if(cookie.getName().equals("SOCOA-SSO-TOKEN")){
-                    ssoToken = cookie.getValue();
-                }
+        String authorizationHeader = request.getHeader("Authorization");
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            String ssoToken = authorizationHeader.substring(7); // "Bearer " 부분을 제거하여 토큰 값만 추출
+
+            if (ssoToken == null) {
+                return null;
             }
+            HttpCookie token = new HttpCookie("ssoToken", ssoToken);
+            String userId = getUserInfoDto(token).getId();
+            System.out.println(userId);
+            return userId;
+        }else{
+            throw new QnABoardNotFindException(EMPTY_JWT);
         }
-
-        if (ssoToken == null) {
-            return null;
-        }
-
-        HttpCookie token = new HttpCookie("ssoToken", ssoToken);
-        String userId = getUserInfoDto(token).getId();
-        System.out.println(userId);
-        return userId;
     }
 
     /**
