@@ -97,7 +97,6 @@ public class QuestionBoardServiceImpl implements QuestionBoardService{
                     String imageUrl = questionImage.getImageUrl();
                     if (imageUrl != null) {
                         s3Service.deleteImageFromS3Board(imageUrl);
-                        questionBoardRepository.deleteById(questionIndex);
                     }
                     questionBoard.removeImage(questionImage);
                 }

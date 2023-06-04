@@ -65,18 +65,11 @@ public class HomeBannerServiceImpl implements HomeBannerService {
             if (deleteImageUrl != null) {
                 // 기존 이미지 삭제
                 s3Service.deleteImageFromS3Banner(deleteImageUrl);
-                homeBannerRepository.deleteById(homeBannerIndex);
             }
                 // 새 이미지 추가 , Url 새로 추가
             String registerImageUrl = s3Service.uploadImageToS3Banner(image);
-            HomeBanner registerHomeBanner = HomeBanner.builder()
-                    .imageUrl(registerImageUrl)
-                    .build();
-            if(!registerHomeBanner.getImageUrl().isEmpty()){
-                homeBannerRepository.save(registerHomeBanner);
-            }else{
-                throw new NonExceptionBanner(ExceptionList.NON_EXCEPTION_BANNER);
-            }
+            deleteHomeBanner.updateImage(registerImageUrl);
+            homeBannerRepository.save(deleteHomeBanner);
         }else {
             throw new NonExceptionBanner(ExceptionList.NOT_FIND_BANNER);
         }

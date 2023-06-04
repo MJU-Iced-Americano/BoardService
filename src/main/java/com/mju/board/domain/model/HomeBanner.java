@@ -23,4 +23,8 @@ public class HomeBanner {
     public HomeBanner(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
+    public void updateImage(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }
