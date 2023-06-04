@@ -35,8 +35,7 @@ public class QuestionBoardServiceImpl implements QuestionBoardService{
                 .type(qnARegisterDto.getType())
                 .userId(userId)
                 .build();
-
-        if (!images.isEmpty()) {
+        if (images != null && !images.isEmpty()) {
             for (MultipartFile image : images) {
                 String imageUrl = s3Service.uploadImageToS3Board(image);
                 questionBoard.addImage(imageUrl);
@@ -98,6 +97,7 @@ public class QuestionBoardServiceImpl implements QuestionBoardService{
                     String imageUrl = questionImage.getImageUrl();
                     if (imageUrl != null) {
                         s3Service.deleteImageFromS3Board(imageUrl);
+                        questionBoardRepository.deleteById(questionIndex);
                     }
                     questionBoard.removeImage(questionImage);
                 }

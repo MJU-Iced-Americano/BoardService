@@ -24,13 +24,13 @@ public class HomeBannerServiceImpl implements HomeBannerService {
     @Override
     @Transactional
     public void registerBanner(MultipartFile image) {
-        String imageUrl = s3Service.uploadImageToS3Banner(image);
-        HomeBanner homeBanner = HomeBanner.builder()
-                .imageUrl(imageUrl)
-                .build();
-        if(!homeBanner.getImageUrl().isEmpty()){
+        if (image != null && !image.isEmpty()) {
+            String imageUrl = s3Service.uploadImageToS3Banner(image);
+            HomeBanner homeBanner = HomeBanner.builder()
+                    .imageUrl(imageUrl)
+                    .build();
             homeBannerRepository.save(homeBanner);
-        }else{
+        } else{
             throw new NonExceptionBanner(ExceptionList.NON_EXCEPTION_BANNER);
         }
 
@@ -55,6 +55,9 @@ public class HomeBannerServiceImpl implements HomeBannerService {
     @Override
     @Transactional
     public void updateBanner(Long homeBannerIndex, MultipartFile image) {
+        if (image == null || image.isEmpty()) {
+            throw new NonExceptionBanner(ExceptionList.NON_EXCEPTION_BANNER);
+        }
         Optional<HomeBanner> optionalHomeBanner = homeBannerRepository.findById(homeBannerIndex);
         if (optionalHomeBanner.isPresent()) {
             HomeBanner deleteHomeBanner = optionalHomeBanner.get();
@@ -62,6 +65,7 @@ public class HomeBannerServiceImpl implements HomeBannerService {
             if (deleteImageUrl != null) {
                 // 기존 이미지 삭제
                 s3Service.deleteImageFromS3Banner(deleteImageUrl);
+                homeBannerRepository.deleteById(homeBannerIndex);
             }
                 // 새 이미지 추가 , Url 새로 추가
             String registerImageUrl = s3Service.uploadImageToS3Banner(image);
