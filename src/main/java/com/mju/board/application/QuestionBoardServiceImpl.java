@@ -89,17 +89,10 @@ public class QuestionBoardServiceImpl implements QuestionBoardService{
             QuestionBoard questionBoard = optionalQuestionBoard.get();
             questionBoard.questionUpdate(qnAupdateDto.getQuestionTitle(), qnAupdateDto.getQuestionContent(), qnAupdateDto.getType());
 
-            if (images != null &&!images.isEmpty()) {
+            if (images != null && !images.isEmpty()) {
                 // 기존 이미지 삭제
-                List<QuestionImage> originalQuestionImages = questionBoard.getQuestionImageList();
-                List<QuestionImage> imagesToDelete = new ArrayList<>(originalQuestionImages);
-                for (QuestionImage questionImage : imagesToDelete) {
-                    String imageUrl = questionImage.getImageUrl();
-                    if (imageUrl != null) {
-                        s3Service.deleteImageFromS3Board(imageUrl);
-                    }
-                    questionBoard.removeImage(questionImage);
-                }
+                deleteImage(questionBoard);
+
                 // 새 이미지 추가 , Url 새로 추가
                 List<String> newImageUrls = new ArrayList<>();
                 for (MultipartFile image : images) {
@@ -109,9 +102,24 @@ public class QuestionBoardServiceImpl implements QuestionBoardService{
                 questionBoard.updateImages(newImageUrls);//추상화를 위해
 
             }
+            if(images == null || images.isEmpty() || images.get(0).isEmpty()){
+                deleteImage(questionBoard);
+            }
             questionBoardRepository.save(questionBoard);
         } else {
             throw new QnABoardNotFindException(ExceptionList.QNABOARD_NOT_EXISTENT);
+        }
+    }
+
+    private void deleteImage(QuestionBoard questionBoard) {
+        List<QuestionImage> originalQuestionImages = questionBoard.getQuestionImageList();
+        List<QuestionImage> imagesToDelete = new ArrayList<>(originalQuestionImages);
+        for (QuestionImage questionImage : imagesToDelete) {
+            String imageUrl = questionImage.getImageUrl();
+            if (imageUrl != null) {
+                s3Service.deleteImageFromS3Board(imageUrl);
+            }
+            questionBoard.removeImage(questionImage);
         }
     }
 
