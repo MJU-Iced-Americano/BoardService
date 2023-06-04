@@ -58,8 +58,8 @@ public class QuestionBoardController {
             String userId = questionBoard.getUserId();
             userService.checkUserId(userId);
             UserInfoDto userInfoDto = userService.getUserInfoDto(userId);
-            String userName = userInfoDto.getUsername();
-            questionBoard.addUserName(userName);
+            String nickname = userInfoDto.getNickname();
+            questionBoard.addUserNicname(nickname);
         }
         return questionBoardList;
     }
@@ -70,7 +70,7 @@ public class QuestionBoardController {
         QuestionBoard qnaBoardOne = questionBoardService.getQnABoardOne(questionIndex);
         userService.checkUserId(qnaBoardOne.getUserId());
         UserInfoDto userInfoDto = userService.getUserInfoDto(qnaBoardOne.getUserId());
-        qnaBoardOne.addUserName(userInfoDto.getUsername());
+        qnaBoardOne.addUserNicname(userInfoDto.getNickname());
         CommonResult commonResult = responseService.getSingleResult(qnaBoardOne);
         return commonResult;
     }
@@ -186,8 +186,8 @@ public class QuestionBoardController {
             String userId = questionCommend.getUserId();
             userService.checkUserId(userId);
             UserInfoDto userInfoDto = userService.getUserInfoDto(userId);
-            String userName = userInfoDto.getUsername();
-            questionCommend.addUserName(userName);
+            String nickname = userInfoDto.getNickname();
+            questionCommend.addUserNicname(nickname);
         }
         return commendList;
     }

@@ -72,9 +72,10 @@ public class QuestionBoard{
     @Column(name = "user_writer_id")
     private String userId;
     @Transient
-    private String userName;
-    public void addUserName(String userName) {
-        this.userName = userName;
+    private String nickname;
+
+    public void addUserNicname(String nickname) {
+        this.nickname = nickname;
     }
 
     @PrePersist // 데이터 생성이 이루어질때 사전 작업

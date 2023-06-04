@@ -28,7 +28,7 @@ public class RequestController {
         System.out.println(qnaBoardOne.getUserId());
         userService.checkUserId(qnaBoardOne.getUserId());
         UserInfoDto userInfoDto = userService.getUserInfoDto(qnaBoardOne.getUserId());
-        qnaBoardOne.addUserName(userInfoDto.getUsername());
+        qnaBoardOne.addUserNicname(userInfoDto.getNickname());
         SingleResult requestResult = responseService.getSingleResult(qnaBoardOne);
         return requestResult;
     }
@@ -39,7 +39,7 @@ public class RequestController {
         QuestionCommend questionCommend = questionBoardService.getQnACommendOne(commendIndex);
         userService.checkUserId(questionCommend.getUserId());
         UserInfoDto userInfoDto = userService.getUserInfoDto(questionCommend.getUserId());
-        questionCommend.addUserName(userInfoDto.getUsername());
+        questionCommend.addUserNicname(userInfoDto.getNickname());
         SingleResult requestResult = responseService.getSingleResult(questionCommend);
         return requestResult;
     }
