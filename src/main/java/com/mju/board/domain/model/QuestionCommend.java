@@ -49,10 +49,9 @@ public class QuestionCommend {
     private Long questionIndex;
 
     @Transient
-    private String nickname;
-
-    public void addUserNicname(String nickname) {
-        this.nickname = nickname;
+    private String userName;
+    public void addUserNicname(String userName) {
+        this.userName = userName;
     }
 
     @PrePersist // 데이터 생성이 이루어질때 사전 작업
